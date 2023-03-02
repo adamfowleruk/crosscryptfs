@@ -6,6 +6,7 @@
  * The main executable of the crosscryptfs CLI
  */
 #include <iostream>
+#include <memory>
 #include "crosscryptfs/crosscryptfs.h"
 
 using namespace crosscryptfs;
@@ -15,6 +16,10 @@ int main(int argc, char* argv[]) {
 
   // Define our wrapped managed storage folder
   CrossCryptFS encfs(".crosscryptfs");
+
+  std::shared_ptr<EncryptionProvider> noenc = std::make_shared<NoEncryptionProvider>();
+  encfs.setEncryptionProvider(noenc);
+
   MetadataPrinter printer;
   printer.print(encfs);
 

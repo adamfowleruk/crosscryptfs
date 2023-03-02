@@ -5,6 +5,7 @@
 #ifndef CROSSCRYPTFS_H
 #define CROSSCRYPTFS_H
 
+#include "encryption.h"
 #include <string>
 #include <vector>
 
@@ -28,6 +29,8 @@ public:
     CrossCryptFS(std::string wrappedFolder);
     ~CrossCryptFS();
 
+    void setEncryptionProvider(std::shared_ptr<EncryptionProvider> provider);
+
     void importFile(std::string fromFileFull, std::string toFileRelative);
     void exportFile(std::string toFileFull, std::string fromFileRelative);
 
@@ -37,6 +40,7 @@ private:
     class Impl;
     std::unique_ptr<Impl> mImpl;
 };
+
 
 } // end of namespace
 
