@@ -33,6 +33,11 @@ created. This folder has the following contents:-
 - settings - a "KEY=VALUE" set of settings for CrossCryptFS - a simple format 
 to minimise dependencies
 
+Other files may exist within this folder depending on usage needs. If files
+exist for a particular encryption algorithm or base file system (E.g. ExFAT)
+then they should be named lowercase with no delimeters for that need to 
+prevent inadvertant name clashes.
+
 ## Settings file
 
 The settings file shall specify the method and strength used to encrypt 
@@ -58,8 +63,8 @@ Some optional settings we may choose to support include:-
 
 - FILESYSTEM=ExFAT - The filesystem used on the drive, if not obtainable from
 system calls
-- BLOCKSIZE=1000 - Block size in bytes in use, if not obtainable from system
-calls
+- BLOCKSIZE=1024 - Block size in bytes in use, if not obtainable from system
+calls (some discs may prefer 512 or 2048 for block size)
 - DISCTECH=SSD - The physical storage media in use
 - MAXFILESIZE=2000000 - Maximum individual target encrypted file size in bytes.
 After this files will either be split, or the operation will fail
