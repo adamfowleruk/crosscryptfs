@@ -6,13 +6,33 @@
 #define CROSSCRYPTFS_H
 
 #include <string>
+#include <vector>
 
 namespace crosscryptfs {
+
+enum class FileType {
+    file,
+    folder
+};
+
+struct FileEntry {
+    FileEntry(std::string relativeOnStorage,std::string name,FileType type);
+    ~FileEntry() = default;
+    std::string relativePathOnStorage; // path including encrypted file name (the 'relative file name' used in API calls)
+    std::string name; // the unencrypted file name without path 9for display purposes)
+    FileType type;
+};
 
 class CrossCryptFS {
 public:
     CrossCryptFS(std::string wrappedFolder);
     ~CrossCryptFS();
+
+    void importFile(std::string fromFileFull, std::string toFileRelative);
+    void exportFile(std::string toFileFull, std::string fromFileRelative);
+
+    void list(std::vector<FileEntry>& addTo, std::string relativeFolderName);
+
 private:
     class Impl;
     std::unique_ptr<Impl> mImpl;

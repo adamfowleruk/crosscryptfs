@@ -12,11 +12,11 @@ A colleague in research wanted to transfer some files that included human genome
 I had another quick look (as I do for this problem every year or so) and came to the conclusion that the nearest things we have currently are as follows:-
 
 - Bitlocker encrypted discs on Windows
-- EncFS in user space in FUSE on Linux
-- eCryptFS in kernel space on Linux
-- FileVault on Mac
+- [EncFS](https://github.com/vgough/encfs) in user space in FUSE on Linux
+- [eCryptFS](https://www.ecryptfs.org/home) in kernel space on Linux
+- [FileVault](https://support.apple.com/en-gb/guide/security/sec4c6dc1b6e/web) on Mac
 - Hard disc manufacturer tooling, typically Windows only and vendor specific
-- Hardware devices with the encryption happening in an embedded device (E.g. protected by a PIN code on the physical USB stick)
+- Hardware devices with the encryption happening in an embedded device (E.g. protected by a PIN code on the physical USB stick, or [Eclypt 600](https://www.ncsc.gov.uk/organisation/viasat-uk/eclypt-600enhanced) style devices)
 
 Clearly none of the above are really cross platform, but from a user perspective the best and most usable option is the USB stick. I've used these in the past and its possible to get tamper proof units too, useful for government grade security use cases for data in transport.
 
@@ -63,6 +63,13 @@ I believe the best approach is therefore as follows:-
 - Create a user space file system support for this
   - FUSE driver for Linux
   - Equivalent for Mac and Windows, if supported, or kernel level if not
+
+Note that the limitations of some file systems today may require additional techniques to be performant and reliable:-
+
+- Splitting large source files into many smaller ones (Very large files, such as sequencing data, may need splitting before copying) - akin to using a zip file with many parts today
+- Thousands of small files may benefit from encapsulation within a compressed archive (like a zip file) to save space prior to transport, but at the cost of complexity in transfering the files, and lack of reliability if these intermediate files are very large to process and the where the process may fail mid way through without being able to be restarted. (Like unzipping a large archive).
+
+Where possible the final software should provide this functionality automatically for convenience, and ideally transparently to the user. (I.e. its encapsulated withing the file system approach when copying a large file or many small files, and does this automatically, as an option).
 
 ## License and Copyright
 

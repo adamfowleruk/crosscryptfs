@@ -4,6 +4,7 @@
 #include "exporter.h"
 #include "crosscryptfs.h"
 #include <string>
+#include <filesystem>
 
 using namespace crosscryptfs;
 
@@ -39,5 +40,16 @@ ExportOperation::~ExportOperation() {}
 void
 ExportOperation::runToCompletion()
 {
-    // TODO
+    namespace fs = std::filesystem;
+    if (!fs::exists(mImpl->m_targetFolder)) {
+        fs::create_directories(mImpl->m_targetFolder);
+    }
+
+    std::vector<FileEntry> contents;
+    mImpl->m_fs.list(contents,"");
+    fs::path rootFolder(mImpl->m_targetFolder);
+    for (auto& el: contents) {
+        fs::path relPath = rootFolder / el.name;
+        mImpl->m_fs.exportFile(relPath,el.relativePathOnStorage);
+    }
 }

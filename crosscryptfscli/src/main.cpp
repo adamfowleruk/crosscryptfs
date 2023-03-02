@@ -19,12 +19,12 @@ int main(int argc, char* argv[]) {
   printer.print(encfs);
 
   // Import / encrypt a source folder
-  ImportOperation importer(encfs, "~/Documents/SomeSourceFolder");
+  ImportOperation importer(encfs, "/Users/adamfowler/Documents/SomeSourceFolder");
   importer.runToCompletion();
   printer.print(encfs);
 
   // Now export to a destination folder
-  ExportOperation exporter(encfs, "~/Documents/SomeTargetFolder");
+  ExportOperation exporter(encfs, "/Users/adamfowler/Documents/SomeTargetFolder");
   exporter.runToCompletion();
   printer.print(encfs);
 

@@ -4,6 +4,7 @@
 #include "importer.h"
 #include "crosscryptfs.h"
 #include <string>
+#include <filesystem>
 
 using namespace crosscryptfs;
 
@@ -40,5 +41,13 @@ ImportOperation::~ImportOperation() {}
 void
 ImportOperation::runToCompletion()
 {
-    // TODO
+    namespace fs = std::filesystem;
+    // List all files immediately below the sourceFolder
+    fs::path fp(mImpl->m_sourceFolder);
+    for (auto& p : fs::directory_iterator(fp)) {
+        if (p.exists() && p.is_regular_file()) {
+            // Import each one into fileystem
+            mImpl->m_fs.importFile(p.path(), p.path().filename());
+        }
+    }
 }

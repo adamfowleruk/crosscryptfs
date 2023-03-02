@@ -5,6 +5,8 @@
 #include "crosscryptfs.h"
 #include <string>
 
+#include <iostream>
+
 using namespace crosscryptfs;
 
 class MetadataPrinter::Impl {
@@ -30,5 +32,11 @@ MetadataPrinter::~MetadataPrinter() {}
 void
 MetadataPrinter::print(CrossCryptFS& fs)
 {
-    // TODO
+    std::vector<FileEntry> contents;
+    fs.list(contents,"");
+    std::cout << "CrossCryptFS contents:-" << std::endl;
+    for (auto& el: contents) {
+        std::cout << "\t" << (el.type == FileType::file ? "File" : "Folder") << ": "
+                  << el.name << " (" << el.relativePathOnStorage << ")" << std::endl;
+    }
 }
