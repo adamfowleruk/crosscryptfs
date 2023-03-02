@@ -31,10 +31,13 @@ ECIESEncryptionProvider::ECIESEncryptionProvider()
     ;
 }
 
+ECIESEncryptionProvider::~ECIESEncryptionProvider() {}
+
 void
 ECIESEncryptionProvider::setParameterValue(std::string name,std::string value)
 {
     // Set parameters based on config file settings
+    // get the txprivkey which we're storing in PLAINTEXT for now
 }
 
 std::string
@@ -46,7 +49,7 @@ ECIESEncryptionProvider::getParameterValues()
 void
 ECIESEncryptionProvider::setKeyMaterial(std::istream& keyDataIn)
 {
-
+    // Copy the key material to a useful format now (as the stream is closed after this function returns)
 }
 
 void
