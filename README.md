@@ -33,6 +33,8 @@ Below are use cases I think should be considered, with the most common at the to
 - Secure transfer (with the key being transferred separate to the encrypted disc via another mechanism)
 - Encrypting or decrypting a drive that is already in use with over 50% of disc space already used
 
+For technical information see the [Design document](docs/DESIGN.md).
+
 ## Starting simply
 
 Rather than try to boil the ocean with building YetAnotherFileSystem [tm] I think a more practical approach is to solve the multi-platform issue first with an encryption mode that can be done in user land with command line tools initially, and a file system drive eventually.
@@ -74,3 +76,5 @@ Where possible the final software should provide this functionality automaticall
 ## License and Copyright
 
 All software files are licensed Apache 2.0 unless otherwise stated. All documentation is licensed CC-BY-4.0. Copyright the crosscryptfs project authors 2023 All Rights Reserved.
+
+See the [AUTHORS.MD file](AUTHORS.md) for a list of project authors.
