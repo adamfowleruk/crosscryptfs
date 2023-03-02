@@ -2,17 +2,20 @@
 //  SPDX-License-Identifier: Apache-2.0
 //
 
-#ifndef CROSSCRYPTFS_H
-#define CROSSCRYPTFS_H
+#ifndef IMPORTER_H
+#define IMPORTER_H
 
+#include "crosscryptfs.h"
 #include <string>
 
 namespace crosscryptfs {
 
-class CrossCryptFS {
+class ImportOperation {
 public:
-    CrossCryptFS(std::string wrappedFolder);
-    ~CrossCryptFS();
+    ImportOperation(CrossCryptFS& fs, std::string targetFolder);
+    ~ImportOperation();
+
+    void runToCompletion();
 private:
     class Impl;
     std::unique_ptr<Impl> mImpl;

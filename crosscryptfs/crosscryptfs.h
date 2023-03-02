@@ -2,3 +2,6 @@
 //  SPDX-License-Identifier: Apache-2.0
 //
 #include "include/crosscryptfs.h"
+#include "include/exporter.h"
+#include "include/importer.h"
+#include "include/printer.h"

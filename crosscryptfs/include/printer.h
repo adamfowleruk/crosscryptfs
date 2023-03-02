@@ -2,17 +2,19 @@
 //  SPDX-License-Identifier: Apache-2.0
 //
 
-#ifndef CROSSCRYPTFS_H
-#define CROSSCRYPTFS_H
+#ifndef PRINTER_H
+#define PRINTER_H
 
-#include <string>
+#include "crosscryptfs.h"
 
 namespace crosscryptfs {
 
-class CrossCryptFS {
+class MetadataPrinter {
 public:
-    CrossCryptFS(std::string wrappedFolder);
-    ~CrossCryptFS();
+    MetadataPrinter();
+    ~MetadataPrinter();
+
+    void print(CrossCryptFS& fs);
 private:
     class Impl;
     std::unique_ptr<Impl> mImpl;

@@ -8,12 +8,18 @@ include(GNUInstallDirs)
 
 set(HEADERS 
 	include/crosscryptfs.h
+	include/exporter.h
+	include/importer.h
+	include/printer.h
 )
 
 add_library(crosscryptfs 
 	${HEADERS}
 
     src/crosscryptfs.cpp
+    src/exporter.cpp
+    src/importer.cpp
+    src/printer.cpp
 )
 
 set_target_properties(crosscryptfs PROPERTIES PUBLIC_HEADER "${HEADERS}")
