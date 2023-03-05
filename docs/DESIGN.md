@@ -44,6 +44,17 @@ The rest of this document describes high level features. If you wish to see
 details on a specific implementation then please see the
 [C++ Classes](CLASSES.md) file.
 
+## Layers
+
+Whilst both the outer layer (to facilitate external key rotation) and
+inner layer (to protect data and its metadata) can have both settings,
+key material, and content, it is likely they will be treated separately.
+
+This is described on the [Layers](LAYERS.md) file. In the remainder of this
+design document we talk about concepts as if no external security functionality
+was being used, and both the outer and inner layer's settings and material were
+being managed by CrossCryptFS.
+
 ## Settings file
 
 The settings file shall specify the method and strength used to encrypt 
@@ -86,12 +97,22 @@ scenarios. Where not provided, the above values shall be presumed.
 
 Separating out the encryption of the keyfile from the encryption of individual
 files allows the outer encryption keys to be changed in a single operation
-without the needs to decrypt and re-encrypt every file.
+without the need to decrypt and re-encrypt every file. There are also other
+benefits mentioned in the [Layers](LAYERS.md) document.
 
 The settings file in the outer `.crosscryptfs` folder specifies enough settings
 to allow crosscryptfs to decrypt the Keyfile only. This keyfile contains all
-information necessary to decrypt the contents of the filesystem itself. This 
-includes:-
+information necessary to decrypt the contents of the inner layer's filesystem 
+itself. 
+
+(Note: The outer layer's keyfile would by default be held as plain files in the 
+`~/.crosscryptfsmeta` folder where a TPM or external KEK management solution
+were not in use. In this case, a subfolder would specify settings for each
+outer file environment. These folders would each contain the same 
+keyfile data we mention elsewhere in this document. They may in future support
+basic password protection using a user's openssl key settings.)
+
+This data includes:-
 
 - The `.crosscryptfs` settings file in `KEY=VALUE` format
 - Any binary settings file for the chosen encryption mechanism 
@@ -174,7 +195,7 @@ in the mandatory `NAMEHEADER` setting in the settings file, encoded as base64.
 Below are the initial encryption schemes we will support. They can be extended
 in future.
 
-## ECIES with X9.63 SHA256 AES-GCM and a P256 curve
+### ECIES with X9.63 SHA256 AES-GCM and a P256 curve
 
 Elliptic Curve Integrated Encryption Scheme used with AES-GCM and a P256 curve
 has become the new default in government security specifications. It is also
