@@ -31,13 +31,34 @@ TEST_CASE("I can create, use, and destroy a FileSystemVolume", "[volume][filesys
         content += c;
     }
     std::istringstream input{content};
-    // std::shared_ptr<crosscryptfs::StreamBytesProvider<std::istringstream>> bytes = 
-    //     std::make_shared<crosscryptfs::StreamBytesProvider<std::istringstream>>(input);
     crosscryptfs::BasicStringStreamBytesProvider bytes = std::make_shared<crosscryptfs::IStreamBytesProvider<std::istringstream>>(input);
     volume.add(filename, bytes, content.length());
 
     // Ensure all is as expected
     REQUIRE(fs::exists(wrappedFolder));
+    // Verify the list of root folders is one
+    // Verify this folder has one file
+
+    // Add additional files
+    std::string filename2(".crosscryptfs/settings");
+    std::string content2 = "FSVERSION=1.0.0";
+    std::istringstream input2{content2};
+    crosscryptfs::BasicStringStreamBytesProvider bytes2 = std::make_shared<crosscryptfs::IStreamBytesProvider<std::istringstream>>(input2);
+    volume.add(filename2, bytes2, content2.length());
+
+    // Verify the list of root folders is one
+    // Verify this folder has two files
+
+    // Verify each of the two files exist by name
+    // Verify they are the correct size
+    // Verify they have the correct content
+
+    // Delete the first one
+    // Verify the list of root folders is one
+    // Verify this folder has one file
+    // Verify the one file exists by name
+    // Verify it has the correct size
+    // Verify it has the correct content
 
     // Request its destruction
     volume.destroy();
