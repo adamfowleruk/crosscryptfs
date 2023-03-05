@@ -11,7 +11,10 @@ add_executable(crosscryptfs-tests
 	# Catch all to ensure all files in Herald are included in code coverage reports
 	# codecoverage-tests.cpp
 
-  # base data types
+	# Base functionality
+	filesystemvolume-tests.cpp
+
+	# Encryption
 	ecies-tests.cpp
 )
 

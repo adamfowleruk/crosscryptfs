@@ -11,10 +11,13 @@ set(HEADERS
 	include/crosscryptfs.h
 	include/exporter.h
 	include/importer.h
+	include/io.h
 	include/printer.h
 	include/encryption.h
 	include/noencryption.h
 	include/ecies.h
+	include/volume.h
+	include/filesystemvolume.h
 )
 
 add_library(crosscryptfs 
@@ -24,10 +27,13 @@ add_library(crosscryptfs
     src/crosscryptfs.cpp
     src/exporter.cpp
     src/importer.cpp
+	src/io.cpp
     src/printer.cpp
 	src/encryption.cpp
 	src/noencryption.cpp
 	src/ecies.cpp
+	src/volume.cpp
+	src/filesystemvolume.cpp
 )
 
 set_target_properties(crosscryptfs PROPERTIES PUBLIC_HEADER "${HEADERS}")
