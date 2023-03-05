@@ -5,11 +5,21 @@
 #ifndef CROSSCRYPTFS_H
 #define CROSSCRYPTFS_H
 
+#include "context.h"
 #include "encryption.h"
 #include <string>
 #include <vector>
 
 namespace crosscryptfs {
+
+// Low-level C style functions first
+
+
+
+
+
+
+// Now C++ wrappers
 
 enum class FileType {
     file,

@@ -17,4 +17,5 @@ add_definitions(-DCROSSCRYPTFS_LOG_LEVEL=4)
 include(GNUInstallDirs)
 
 add_subdirectory(crosscryptfs) 
+add_subdirectory(crosscryptfs-tests)
 add_subdirectory(crosscryptfscli)

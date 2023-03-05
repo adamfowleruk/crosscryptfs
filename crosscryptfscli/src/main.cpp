@@ -31,9 +31,9 @@ int main(int argc, char* argv[]) {
   EC_KEY *ec_key = NULL; // EC key from keyfile
   
   // RX
-  uint8_t *pubk      = NULL;
+  uint8_t *pubk      = NULL; // RX pub key
   size_t   pubk_len  = 0;
-  uint8_t *privk     = NULL;
+  uint8_t *privk     = NULL; // TX priv key
   size_t   privk_len = 0;
   int      curve;
 
@@ -42,12 +42,12 @@ int main(int argc, char* argv[]) {
   size_t   epubk_len = 0;
 
   // AES-GCM
-  uint8_t *iv             = NULL;
-  uint8_t  iv_len         = 0;
-  uint8_t *tag            = NULL;
-  uint8_t  tag_len        = 0;
-  uint8_t *ciphertext     = NULL;
-  uint8_t  ciphertext_len = 0;
+  // uint8_t *iv             = NULL;
+  // uint8_t  iv_len         = 0;
+  // uint8_t *tag            = NULL;
+  // uint8_t  tag_len        = 0;
+  // uint8_t *ciphertext     = NULL;
+  // uint8_t  ciphertext_len = 0;
 
   if (argc < 2) {
     std::cerr << "ERROR: No EC key specified." << std::endl;
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
   size_t   skey_len  = 0;
 
 
-  // Generate Transmitter generate sym key
+  // Generate Transmitter sym key
   EC_POINT       *peer_pubk_point = NULL;
 
   // Crete empty transmitter key pair
@@ -183,13 +183,30 @@ int main(int argc, char* argv[]) {
 
   // save the private key (privk) to .crosscryptfs/ecies.txprivkey for now - THIS WILL BE EXTERNAL LATER in a TPM or similar
   std::cout << "transmitter private key length: " << privk_len << std::endl;
-  std::ofstream privkeyos("encryptedfolder/.crosscryptfs/ecies.txprivkey");
+  std::ofstream privkeyos("encryptedfolder/.crosscryptfs/ecies.txprivatekey");
   for (std::size_t i = 0; i < privk_len;++i) {
     privkeyos << privk[i];
   }
   privkeyos.close();
 
+  // save the rx pub key in binary format for convenience
+  std::cout << "receiver public key length: " << pubk_len << std::endl;
+  std::ofstream pubkeyos("encryptedfolder/.crosscryptfs/ecies.rxpublickey");
+  for (std::size_t i = 0; i < pubk_len;++i) {
+    pubkeyos << pubk[i];
+  }
+  pubkeyos.close();
+
+  // TODO the X9.63 steps are currently missing from this code - we're instead
+  // directly using the sym key as the kENC rather than using this with the rx
+  // public key and the X9.63 KDF to generate a 16 byte IV and a 16 byte kENC.
+  // I.e. today this isn't compatible with Apple's ECIES mechanism.
+
   // save the sym key (skey) UNENCRYPTED for now to .crosscryptfs/keyfile
+  // WARNING: Actual sym key MUST be held in memory in future.
+  //          This ECIES keyfile will be XORed with a randomly generated
+  //          keyfile (allowing for the txprivkey or rxpubkey to be changed 
+  //          without full a decryption/encryption cycle of all files)
   std::cout << "symmetric key length: " << skey_len << std::endl;
   std::ofstream keyfileos("encryptedfolder/.crosscryptfs/keyfile");
   for (std::size_t i = 0; i < skey_len;++i) {
@@ -204,6 +221,8 @@ int main(int argc, char* argv[]) {
 
   // Define our wrapped managed storage folder
   CrossCryptFS encfs("encryptedfolder");
+
+  // TODO don't bother with private key - just load sym key (ECIES Shared Secret Z) from the command line like recipient public key
 
   // std::shared_ptr<EncryptionProvider> enc = std::make_shared<NoEncryptionProvider>();
   std::shared_ptr<EncryptionProvider> enc = std::make_shared<ECIESEncryptionProvider>();

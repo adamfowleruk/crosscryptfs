@@ -38,6 +38,12 @@ exist for a particular encryption algorithm or base file system (E.g. ExFAT)
 then they should be named lowercase with no delimeters for that need to 
 prevent inadvertant name clashes.
 
+## Implementation details
+
+The rest of this document describes high level features. If you wish to see
+details on a specific implementation then please see the
+[C++ Classes](CLASSES.md) file.
+
 ## Settings file
 
 The settings file shall specify the method and strength used to encrypt 
@@ -75,6 +81,59 @@ folder and unmerge transparently
 
 These may allow CrossCryptFS to provide better read and write speeds in some
 scenarios. Where not provided, the above values shall be presumed.
+
+## Keyfile
+
+Separating out the encryption of the keyfile from the encryption of individual
+files allows the outer encryption keys to be changed in a single operation
+without the needs to decrypt and re-encrypt every file.
+
+The settings file in the outer `.crosscryptfs` folder specifies enough settings
+to allow crosscryptfs to decrypt the Keyfile only. This keyfile contains all
+information necessary to decrypt the contents of the filesystem itself. This 
+includes:-
+
+- The `.crosscryptfs` settings file in `KEY=VALUE` format
+- Any binary settings file for the chosen encryption mechanism 
+(E.g. ecies.rxpublickey)
+
+As an example, for an ECIES encryption mechanism where the information is held
+purely in a non-TPM OpenSSL v3 ECIES scheme on the filesystem, the encrypted
+keyfile would have the following contents:-
+
+- Settings file
+  - FSVERSION=1.0.0
+  - ENCRYPTION=ECIESX963SHA256AESGCM
+  - PROVIDER=OPENSSLV3
+  - NAMEHEADER=base64(BINARY)
+- ecies.rxpublickey
+  - If the provider was not OpenSSLv3, E.g. Apple TPM, then this may instead
+  be just a setting in the settings file with the name of the key in the TPM
+- ecies.txprivatekey (which the txpublickey can be generated from)
+  - If the provider was not OpenSSLv3, E.g. Apple TPM, then this may instead
+  be just a setting in the settings file with the name of the key in the TPM
+
+The format of this file shall consist of the following, for each file:-
+
+- A uint64_t number for the length of the filename
+- The filename in whatever format is supported (E.g. char string)
+- A uint64_t number for the length of the file
+- The files data
+- Format repeats until all files are encoded
+
+This shall be represented inside a CrossCryptFS instance as a virtual volume
+to be operated upon just as if those files existed unencrypted on the 
+containing disc. 
+
+This is a simple lowest common denominator format that is easily to implement
+on any platform. No permissions or file metadata are included because the 
+files merely describe crosscryptfs settings, and thus if you have permission
+to access and decrypt the keyfile then you can access all of these files.
+
+Note that the format does not require the settings file to be the first file
+in the encrypted volume, and nor does it specify the ordering of the keys
+within the settings file. Ideally this should be unpredictable on each
+encoding of the keyfile to prevent a crib being formed.
 
 ## Encrypted file format
 
@@ -115,7 +174,7 @@ in the mandatory `NAMEHEADER` setting in the settings file, encoded as base64.
 Below are the initial encryption schemes we will support. They can be extended
 in future.
 
-## ECIES with AES-GCM and a P256 curve
+## ECIES with X9.63 SHA256 AES-GCM and a P256 curve
 
 Elliptic Curve Integrated Encryption Scheme used with AES-GCM and a P256 curve
 has become the new default in government security specifications. It is also

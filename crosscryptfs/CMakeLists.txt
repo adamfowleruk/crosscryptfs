@@ -7,6 +7,7 @@ set(CMAKE_CXX_EXTENSIONS ON)
 include(GNUInstallDirs)
 
 set(HEADERS 
+	include/context.h
 	include/crosscryptfs.h
 	include/exporter.h
 	include/importer.h
@@ -19,6 +20,7 @@ set(HEADERS
 add_library(crosscryptfs 
 	${HEADERS}
 
+    src/context.cpp
     src/crosscryptfs.cpp
     src/exporter.cpp
     src/importer.cpp

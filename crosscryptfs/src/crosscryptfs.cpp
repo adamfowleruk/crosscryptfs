@@ -12,7 +12,11 @@
 #include <iostream>
 #include <filesystem>
 
-using namespace crosscryptfs;
+namespace crosscryptfs {
+
+
+
+
 
 FileEntry::FileEntry(std::string relativeOnStorage,std::string name,FileType type)
     : relativePathOnStorage(relativeOnStorage),
@@ -107,4 +111,6 @@ CrossCryptFS::list(std::vector<FileEntry>& addTo, std::string relativeFolderName
             addTo.emplace_back(p.path().filename(),p.path().filename(),FileType::file);
         }
     }       
+}
+
 }
