@@ -22,6 +22,10 @@ class IBytesProvider {
 public:
     IBytesProvider() noexcept = default;
     virtual ~IBytesProvider() noexcept = default;
+    IBytesProvider(const IBytesProvider&) = delete;
+    IBytesProvider(IBytesProvider&&) = delete;
+    IBytesProvider& operator=(const IBytesProvider&) = delete;
+    IBytesProvider& operator=(IBytesProvider&&) = delete;
 
     virtual size_t getNextBytes(ByteArray& bytes) noexcept = 0;
 };
@@ -37,6 +41,10 @@ public:
         ;
     }
     ~IStreamBytesProvider() noexcept {};
+    IStreamBytesProvider(const IStreamBytesProvider&) = delete;
+    IStreamBytesProvider(IStreamBytesProvider&&) = delete;
+    IStreamBytesProvider& operator=(const IStreamBytesProvider&) = delete;
+    IStreamBytesProvider& operator=(IStreamBytesProvider&&) = delete;
 
     size_t getNextBytes(ByteArray& bytes) noexcept override
     {

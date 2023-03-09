@@ -13,6 +13,8 @@ class ImportOperation::Impl {
 public:
     Impl(CrossCryptFS& fs,std::string sourceFolder);
     ~Impl();
+    Impl(const Impl&) = delete;
+    Impl(Impl&&) = delete;
 
 // These are public for ease
     CrossCryptFS& m_fs;

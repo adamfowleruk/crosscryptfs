@@ -19,6 +19,11 @@ class VolumeProvider {
 public:
     VolumeProvider() noexcept = default;
     virtual ~VolumeProvider() noexcept = default;
+    VolumeProvider(const VolumeProvider&) = delete;
+    VolumeProvider(VolumeProvider&&) = delete;
+
+    VolumeProvider& operator=(const VolumeProvider&) = delete;
+    VolumeProvider& operator=(VolumeProvider&&) = delete;
 
     virtual void add(const std::string relativePath, BytesProvider src, const size_t length) noexcept = 0;
     virtual void destroy() noexcept = 0;

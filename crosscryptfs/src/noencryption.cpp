@@ -13,6 +13,8 @@ class NoEncryptionProvider::Impl {
 public:
     Impl();
     ~Impl();
+    Impl(const Impl&) = delete;
+    Impl(Impl&&) = delete;
 
     // TODO state values here
 };

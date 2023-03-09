@@ -21,6 +21,10 @@ class FileSystemVolumeProvider : public VolumeProvider {
 public:
     FileSystemVolumeProvider(std::string wrappedFolder) noexcept;
     ~FileSystemVolumeProvider() noexcept;
+    FileSystemVolumeProvider(const FileSystemVolumeProvider&) = delete;
+    FileSystemVolumeProvider(FileSystemVolumeProvider&&) = delete;
+    FileSystemVolumeProvider& operator=(const FileSystemVolumeProvider&) = delete;
+    FileSystemVolumeProvider& operator=(FileSystemVolumeProvider&&) = delete;
 
     void add(const std::string relativePath,BytesProvider src, const size_t length) noexcept override;
     void destroy() noexcept override;

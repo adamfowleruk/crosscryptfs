@@ -13,6 +13,10 @@ class MetadataPrinter {
 public:
     MetadataPrinter();
     ~MetadataPrinter();
+    MetadataPrinter(const MetadataPrinter&) = delete;
+    MetadataPrinter(MetadataPrinter&&) = delete;
+    MetadataPrinter& operator=(const MetadataPrinter&) = delete;
+    MetadataPrinter& operator=(MetadataPrinter&&) = delete;
 
     void print(CrossCryptFS& fs);
 private:

@@ -15,6 +15,10 @@ class NoEncryptionProvider : public EncryptionProvider {
 public:
     NoEncryptionProvider();
     ~NoEncryptionProvider();
+    NoEncryptionProvider(const NoEncryptionProvider&) = delete;
+    NoEncryptionProvider(NoEncryptionProvider&&) = delete;
+    NoEncryptionProvider& operator=(const NoEncryptionProvider&) = delete;
+    NoEncryptionProvider& operator=(NoEncryptionProvider&&) = delete;
     
     void setParameterValue(std::string name,std::string value) override;
     std::string getParameterValues() override;

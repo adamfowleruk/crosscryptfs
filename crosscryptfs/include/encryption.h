@@ -14,6 +14,10 @@ class EncryptionProvider {
 public:
     EncryptionProvider() = default;
     virtual ~EncryptionProvider() = default;
+    EncryptionProvider(const EncryptionProvider&) = delete;
+    EncryptionProvider(EncryptionProvider&&) = delete;
+    EncryptionProvider& operator=(const EncryptionProvider&) = delete;
+    EncryptionProvider& operator=(EncryptionProvider&&) = delete;
 
     // virtual std::string getShortPrefix() = 0;
     // virtual std::string getLongName() = 0;

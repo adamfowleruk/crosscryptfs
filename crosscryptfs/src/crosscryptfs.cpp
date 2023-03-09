@@ -35,6 +35,8 @@ class CrossCryptFS::Impl {
 public:
     Impl(std::string wrappedFolder);
     ~Impl();
+    Impl(const Impl&) = delete;
+    Impl(Impl&&) = delete;
 
     std::string m_wrapped;
     std::shared_ptr<EncryptionProvider> m_provider;

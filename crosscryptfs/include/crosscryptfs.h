@@ -29,6 +29,11 @@ enum class FileType {
 struct FileEntry {
     FileEntry(std::string relativeOnStorage,std::string name,FileType type);
     ~FileEntry() = default;
+    FileEntry(const FileEntry& copyFrom) = default;
+    FileEntry(FileEntry&& moveFrom) = default;
+    FileEntry& operator=(const FileEntry&) = default;
+    FileEntry& operator=(FileEntry&&) = default;
+
     std::string relativePathOnStorage; // path including encrypted file name (the 'relative file name' used in API calls)
     std::string name; // the unencrypted file name without path 9for display purposes)
     FileType type;
@@ -38,6 +43,10 @@ class CrossCryptFS {
 public:
     CrossCryptFS(std::string wrappedFolder);
     ~CrossCryptFS();
+    CrossCryptFS(const CrossCryptFS&) = delete;
+    CrossCryptFS(CrossCryptFS&&) = delete;
+    CrossCryptFS& operator=(const CrossCryptFS&) = delete;
+    CrossCryptFS& operator=(CrossCryptFS&&) = delete;
 
     void setEncryptionProvider(std::shared_ptr<EncryptionProvider> provider);
 

@@ -64,6 +64,10 @@ class ECIESEncryptionProvider : public EncryptionProvider {
 public:
     ECIESEncryptionProvider();
     ~ECIESEncryptionProvider();
+    ECIESEncryptionProvider(const ECIESEncryptionProvider&) = delete;
+    ECIESEncryptionProvider(ECIESEncryptionProvider&&) = delete;
+    ECIESEncryptionProvider& operator=(const ECIESEncryptionProvider&) = delete;
+    ECIESEncryptionProvider& operator=(ECIESEncryptionProvider&&) = delete;
     
     void setParameterValue(std::string name,std::string value) override;
     std::string getParameterValues() override;

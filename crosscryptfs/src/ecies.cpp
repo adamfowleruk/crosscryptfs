@@ -102,6 +102,8 @@ class ECIESEncryptionProvider::Impl {
 public:
     Impl();
     ~Impl();
+    Impl(const Impl&) = delete;
+    Impl(Impl&&) = delete;
 
     // TODO state values here
     uint8_t skey[512];

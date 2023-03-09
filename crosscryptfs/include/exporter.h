@@ -14,6 +14,10 @@ class ExportOperation {
 public:
     ExportOperation(CrossCryptFS& fs, std::string sourceFolder);
     ~ExportOperation();
+    ExportOperation(const ExportOperation&) = delete;
+    ExportOperation(ExportOperation&&) = delete;
+    ExportOperation& operator=(const ExportOperation&) = delete;
+    ExportOperation& operator=(ExportOperation&&) = delete;
 
     void runToCompletion();
 private:

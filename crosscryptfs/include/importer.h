@@ -14,6 +14,10 @@ class ImportOperation {
 public:
     ImportOperation(CrossCryptFS& fs, std::string targetFolder);
     ~ImportOperation();
+    ImportOperation(const ImportOperation&) = delete;
+    ImportOperation(ImportOperation&&) = delete;
+    ImportOperation& operator=(const ImportOperation&) = delete;
+    ImportOperation& operator=(ImportOperation&&) = delete;
 
     void runToCompletion();
 private:

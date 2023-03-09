@@ -17,6 +17,8 @@ class FileSystemVolumeProvider::Impl {
 public:
     Impl(std::string wrapped) noexcept;
     ~Impl() noexcept;
+    Impl(const Impl&) = delete;
+    Impl(Impl&&) = delete;
 
     std::string wrappedFolder;
 };

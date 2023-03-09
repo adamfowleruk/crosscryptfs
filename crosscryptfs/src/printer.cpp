@@ -14,6 +14,8 @@ class MetadataPrinter::Impl {
 public:
     Impl();
     ~Impl();
+    Impl(const Impl&) = delete;
+    Impl(Impl&&) = delete;
 };
 
 MetadataPrinter::Impl::Impl() {}
