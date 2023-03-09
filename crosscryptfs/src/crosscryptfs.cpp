@@ -4,6 +4,7 @@
 
 #include "crosscryptfs.h"
 #include "noencryption.h"
+#include "file.h"
 
 #include <vector>
 #include <string>
@@ -13,23 +14,6 @@
 #include <filesystem>
 
 namespace crosscryptfs {
-
-
-
-
-
-FileEntry::FileEntry(std::string relativeOnStorage,std::string name,FileType type)
-    : relativePathOnStorage(relativeOnStorage),
-      name(name),
-      type(type)
-{
-    ;
-}
-
-
-
-
-
 
 class CrossCryptFS::Impl {
 public:

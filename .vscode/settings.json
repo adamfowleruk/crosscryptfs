@@ -103,7 +103,15 @@
       "__tuple": "cpp",
       "cwctype": "cpp",
       "string_view": "cpp",
-      "memory_resource": "cpp"
+      "memory_resource": "cpp",
+      "any": "cpp",
+      "bit": "cpp",
+      "numbers": "cpp",
+      "semaphore": "cpp",
+      "hash_map": "cpp",
+      "*.tcc": "cpp",
+      "stop_token": "cpp",
+      "cinttypes": "cpp"
     },
     "cmake.configureSettings": {
       "CODE_COVERAGE": "ON",

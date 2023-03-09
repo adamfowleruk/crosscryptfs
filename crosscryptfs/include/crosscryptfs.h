@@ -5,6 +5,7 @@
 #ifndef CROSSCRYPTFS_H
 #define CROSSCRYPTFS_H
 
+#include "file.h"
 #include "context.h"
 #include "encryption.h"
 #include <string>
@@ -21,23 +22,6 @@ namespace crosscryptfs {
 
 // Now C++ wrappers
 
-enum class FileType {
-    file,
-    folder
-};
-
-struct FileEntry {
-    FileEntry(std::string relativeOnStorage,std::string name,FileType type);
-    ~FileEntry() = default;
-    FileEntry(const FileEntry& copyFrom) = default;
-    FileEntry(FileEntry&& moveFrom) = default;
-    FileEntry& operator=(const FileEntry&) = default;
-    FileEntry& operator=(FileEntry&&) = default;
-
-    std::string relativePathOnStorage; // path including encrypted file name (the 'relative file name' used in API calls)
-    std::string name; // the unencrypted file name without path 9for display purposes)
-    FileType type;
-};
 
 class CrossCryptFS {
 public:

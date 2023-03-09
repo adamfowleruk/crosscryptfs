@@ -6,6 +6,7 @@
 // Low level items
 // C++ adapters
 #include "include/io.h"
+#include "include/file.h"
 
 // Volume Providers
 #include "include/volume.h"

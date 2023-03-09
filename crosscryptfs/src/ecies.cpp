@@ -149,7 +149,7 @@ ECIESEncryptionProvider::setKeyMaterial(std::istream& keyDataIn)
 
 void
 ECIESEncryptionProvider::encryptContent(std::istream& plainIn,std::ostream& encryptedOut)
-{        
+{
     // EVP_CIPHER_CTX *ctx;
     // int len = 0;
 

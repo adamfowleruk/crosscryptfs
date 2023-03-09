@@ -9,6 +9,7 @@ include(GNUInstallDirs)
 set(HEADERS 
 	include/context.h
 	include/crosscryptfs.h
+	include/file.h
 	include/exporter.h
 	include/importer.h
 	include/io.h
@@ -26,6 +27,7 @@ add_library(crosscryptfs
     src/context.cpp
     src/crosscryptfs.cpp
     src/exporter.cpp
+	src/file.cpp
     src/importer.cpp
 	src/io.cpp
     src/printer.cpp

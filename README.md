@@ -1,5 +1,6 @@
 # crosscryptfs
-Cross platform filesystem with encryption options.
+Cross platform filesystem with encryption options. Initial version limited to a
+Command Line Interface (CLI) rather than a file system driver.
 
 ## Motivation
 

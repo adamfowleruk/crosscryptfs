@@ -61,6 +61,18 @@ FileSystemVolumeProvider::add(const std::string relativePath,BytesProvider src, 
 }
 
 void
+FileSystemVolumeProvider::remove(const std::string relativePath) noexcept
+{
+    namespace fs = std::filesystem;
+    std::string toRemove = mImpl->wrappedFolder + "/" + relativePath;
+    if (fs::exists(toRemove)) {
+        std::error_code ec;
+        std::uintmax_t numberRemoved = fs::remove_all(toRemove, ec);
+    }
+
+}
+
+void
 FileSystemVolumeProvider::destroy() noexcept
 {
     namespace fs = std::filesystem;
@@ -69,5 +81,23 @@ FileSystemVolumeProvider::destroy() noexcept
         std::uintmax_t numberRemoved = fs::remove_all(mImpl->wrappedFolder, ec);
     }
 }
+
+void
+FileSystemVolumeProvider::list(std::vector<FileEntry>& addTo, std::string relativeFolderName) noexcept
+{
+    // TODO use relativeFolderName rather than assuming the root folder
+    namespace fs = std::filesystem;
+    fs::path fp(mImpl->wrappedFolder + "/" + relativeFolderName);
+    for (auto& p : fs::directory_iterator(fp)) {
+        if (p.exists()) {
+            if (p.is_regular_file()) {
+                addTo.emplace_back(p.path().filename(),p.path().filename(),FileType::file);
+            } else if (p.is_directory()) {
+                addTo.emplace_back(p.path().filename(),p.path().filename(),FileType::folder);
+            }
+        }
+    }   
+}
+
 
 } // end namespace

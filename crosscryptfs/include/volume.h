@@ -7,6 +7,7 @@
 
 #include <string>
 #include "io.h"
+#include "file.h"
 
 namespace crosscryptfs {
 
@@ -26,7 +27,10 @@ public:
     VolumeProvider& operator=(VolumeProvider&&) = delete;
 
     virtual void add(const std::string relativePath, BytesProvider src, const size_t length) noexcept = 0;
+    virtual void remove(const std::string relativePath) noexcept = 0;
     virtual void destroy() noexcept = 0;
+    virtual void list(std::vector<FileEntry>& addTo, std::string relativeFolderName) noexcept = 0;
+
 };
 
 } // end namespace
