@@ -4,4 +4,6 @@
 
 #include "encryption.h"
 
-using namespace crosscryptfs;
+namespace crosscryptfs {
+    
+} // end namespace

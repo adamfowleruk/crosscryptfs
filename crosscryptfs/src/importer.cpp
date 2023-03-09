@@ -1,12 +1,13 @@
 //  Copyright 2023 crosscryptfs Project Contributors
 //  SPDX-License-Identifier: Apache-2.0
 //
+
 #include "importer.h"
 #include "crosscryptfs.h"
 #include <string>
 #include <filesystem>
 
-using namespace crosscryptfs;
+namespace crosscryptfs {
 
 class ImportOperation::Impl {
 public:
@@ -51,3 +52,5 @@ ImportOperation::runToCompletion()
         }
     }
 }
+
+} // end namespace

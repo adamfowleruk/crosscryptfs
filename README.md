@@ -20,6 +20,11 @@ I had another quick look (as I do for this problem every year or so) and came to
 
 Clearly none of the above are really cross platform, but from a user perspective the best and most usable option is the USB stick. I've used these in the past and its possible to get tamper proof units too, useful for government grade security use cases for data in transport.
 
+## Value of CrossCryptFS
+
+Please see the [Value](docs/VALUE.md) document for a non-technical description of 
+the value of CrossCryptFS.
+
 ## Design needs
 
 Whilst the above solve a number of key technical issues, there are user issues that are only partially addressed for specific, but I don't think niche, use cases.

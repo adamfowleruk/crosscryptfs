@@ -5,6 +5,9 @@ developers to create application on. Lower level C functions will provide
 much of the basic functionality. These classes allow for an easier mental
 model.
 
+For details on why we're supporting C++ with some C initially, see the
+[C++ document](CPP.md).
+
 The basic class list is as follows:-
 
 - EncryptionProvider - Provides encryptContent and decryptContent functions

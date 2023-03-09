@@ -16,7 +16,7 @@
 
 namespace crosscryptfs {
 
-namespace ecies{
+namespace ecies {
 
 int
 ecies_verify_platform()

@@ -1,12 +1,13 @@
 //  Copyright 2023 crosscryptfs Project Contributors
 //  SPDX-License-Identifier: Apache-2.0
 //
+
 #include "exporter.h"
 #include "crosscryptfs.h"
 #include <string>
 #include <filesystem>
 
-using namespace crosscryptfs;
+namespace crosscryptfs {
 
 class ExportOperation::Impl {
 public:
@@ -53,3 +54,5 @@ ExportOperation::runToCompletion()
         mImpl->m_fs.exportFile(relPath,el.relativePathOnStorage);
     }
 }
+
+} // end namespace

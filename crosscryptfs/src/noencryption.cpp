@@ -7,7 +7,7 @@
 #include <istream>
 #include <iostream>
 
-using namespace crosscryptfs;
+namespace crosscryptfs {
 
 class NoEncryptionProvider::Impl {
 public:
@@ -75,3 +75,5 @@ NoEncryptionProvider::decryptContent(std::istream& encryptedIn,std::ostream& pla
         }
     }
 }
+
+} // end namespace

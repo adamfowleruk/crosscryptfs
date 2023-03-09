@@ -1,13 +1,14 @@
 //  Copyright 2023 crosscryptfs Project Contributors
 //  SPDX-License-Identifier: Apache-2.0
 //
+
 #include "printer.h"
 #include "crosscryptfs.h"
 #include <string>
 
 #include <iostream>
 
-using namespace crosscryptfs;
+namespace crosscryptfs {
 
 class MetadataPrinter::Impl {
 public:
@@ -40,3 +41,5 @@ MetadataPrinter::print(CrossCryptFS& fs)
                   << el.name << " (" << el.relativePathOnStorage << ")" << std::endl;
     }
 }
+
+} // end namespace

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.12)
 
-project(crosscryptfs VERSION 1.0.0 LANGUAGES CXX)
+project(crosscryptfs VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}")
 # Include the sanitizer module

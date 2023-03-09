@@ -8,6 +8,11 @@ performing file level encryption as it could be layed on top of existing file
 systems like ExFAT, and so could allow a tool in user-land without kernel
 level privileges to be used.
 
+## Value of CrossCryptFS
+
+Please see the [Value](VALUE.md) document for a non-technical description of 
+the value of CrossCryptFS.
+
 ## High level design
 
 We shall aim in our first version to provide an encryption layer in user space
