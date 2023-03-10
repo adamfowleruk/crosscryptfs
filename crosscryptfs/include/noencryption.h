@@ -11,6 +11,13 @@
 
 namespace crosscryptfs {
 
+/*!
+ * \brief Provides no encryption and thus allows simple disk to disk file import/export
+ *
+ * \note Used primarily for testing but also useful for unencrypted file backups, or
+ * to allow large file splitting and small file joining and compression via CrossCryptFS
+ * utility functions.
+ */
 class NoEncryptionProvider : public EncryptionProvider {
 public:
     NoEncryptionProvider();

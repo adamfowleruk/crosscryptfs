@@ -11,6 +11,7 @@
 #include <string>
 #include <vector>
 
+/*! \brief The CrossCryptFS namespace where all our classes and functions exist. */
 namespace crosscryptfs {
 
 // Low-level C style functions first
@@ -22,7 +23,9 @@ namespace crosscryptfs {
 
 // Now C++ wrappers
 
-
+/*!
+ * \brief The main utility class for CrossCryptFS
+ */
 class CrossCryptFS {
 public:
     CrossCryptFS(std::string wrappedFolder);

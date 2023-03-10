@@ -5,14 +5,19 @@
 #include "ecies.h"
 #include <string>
 
-#include <openssl/bn.h>
-#include <openssl/ec.h>
-#include <openssl/ecdh.h>
-#include <openssl/pem.h>
-#include <openssl/rand.h>
-#include <openssl/evp.h>
+// #include <openssl/bn.h>
+// #include <openssl/ec.h>
+// #include <openssl/ecdh.h>
+// #include <openssl/pem.h>
+// #include <openssl/rand.h>
+// #include <openssl/evp.h>
 
-#include <openssl/provider.h>
+// #include <openssl/provider.h>
+
+#include <openssl/conf.h>
+#include <openssl/evp.h>
+#include <openssl/err.h>
+#include <openssl/pem.h>
 
 namespace crosscryptfs {
 
@@ -24,72 +29,113 @@ ecies_verify_platform()
     OSSL_PROVIDER *fips;
     OSSL_PROVIDER *base;
 
-    fips = OSSL_PROVIDER_load(NULL, "fips");
-    if (fips == NULL) {
-        printf("Failed to load FIPS provider\n");
-        return EXIT_FAILURE;
-    }
+    // fips = OSSL_PROVIDER_load(NULL, "fips");
+    // if (fips == NULL) {
+    //     printf("Failed to load FIPS provider\n");
+    //     return EXIT_FAILURE;
+    // }
     return 0;
 }
 
 void
 ecies_generatepublickey(std::string privateKeyDERFilename, uint8_t** publicKeyOut, size_t* publicKeyLengthOut)
 {
+    // Old OpenSSL v1.1.0 way of doing things:-
+    // EC_KEY *ec_key = NULL; // EC key from keyfile
+    
+    // // RX
+    // //   uint8_t *pubk      = NULL; // RX pub key
+    // //   size_t   pubk_len  = 0;
+    // uint8_t *privk     = NULL; // TX priv key
+    // size_t   privk_len = 0;
+    // int      curve;
 
-  EC_KEY *ec_key = NULL; // EC key from keyfile
-  
-  // RX
-//   uint8_t *pubk      = NULL; // RX pub key
-//   size_t   pubk_len  = 0;
-  uint8_t *privk     = NULL; // TX priv key
-  size_t   privk_len = 0;
-  int      curve;
+    // // load ecies pub key
+    // const EC_GROUP *ec_group = NULL;
+    // BIO            *bio_key  = NULL;
+    // BIO            *bio_out  = NULL; /* stdout */
 
-  // load ecies pub key
-  const EC_GROUP *ec_group = NULL;
-  BIO            *bio_key  = NULL;
-  BIO            *bio_out  = NULL; /* stdout */
+    // bio_key = BIO_new_file(privateKeyDERFilename.c_str(), "r");
+    // //   if (bio_key == NULL) {
+    // //       std::cerr << "Failed to read EC key file '" << privateKeyFilename << std::endl;
+    // //     //   return 1;
+    // //   }
+    // ec_key = d2i_ECPrivateKey_bio(bio_key, NULL);
+    // //   if (ec_key == NULL) {
+    // //       std::cerr << "Failed to parse EC key file '" << privateKeyFilename << std::endl;
+    // //     //   return 1;
+    // //   }
+    // BIO_free(bio_key);
 
-  bio_key = BIO_new_file(privateKeyDERFilename.c_str(), "r");
-//   if (bio_key == NULL) {
-//       std::cerr << "Failed to read EC key file '" << privateKeyFilename << std::endl;
-//     //   return 1;
-//   }
-  ec_key = d2i_ECPrivateKey_bio(bio_key, NULL);
-//   if (ec_key == NULL) {
-//       std::cerr << "Failed to parse EC key file '" << privateKeyFilename << std::endl;
-//     //   return 1;
-//   }
-  BIO_free(bio_key);
+    // // get curve params
+    // ec_group = EC_KEY_get0_group(ec_key);
 
-  // get curve params
-  ec_group = EC_KEY_get0_group(ec_key);
+    // // Create bio wrapper
+    // bio_out = BIO_new_fp(stdout, BIO_NOCLOSE);
 
-  // Create bio wrapper
-  bio_out = BIO_new_fp(stdout, BIO_NOCLOSE);
+    // // set point curve
+    // EC_KEY_set_conv_form(ec_key, POINT_CONVERSION_UNCOMPRESSED);
 
-  // set point curve
-  EC_KEY_set_conv_form(ec_key, POINT_CONVERSION_UNCOMPRESSED);
+    // // Get curve in binary array format
+    // ec_group   = EC_KEY_get0_group(ec_key);
+    // const EC_POINT *pub        = EC_KEY_get0_public_key(ec_key);
+    // BIGNUM         *pub_bn     = BN_new();
+    // BN_CTX         *pub_bn_ctx = BN_CTX_new();
 
-  // Get curve in binary array format
-  ec_group   = EC_KEY_get0_group(ec_key);
-  const EC_POINT *pub        = EC_KEY_get0_public_key(ec_key);
-  BIGNUM         *pub_bn     = BN_new();
-  BN_CTX         *pub_bn_ctx = BN_CTX_new();
+    // BN_CTX_start(pub_bn_ctx);
 
-  BN_CTX_start(pub_bn_ctx);
+    // EC_POINT_point2bn(ec_group, pub, POINT_CONVERSION_UNCOMPRESSED,
+    //                     pub_bn, pub_bn_ctx);
 
-  EC_POINT_point2bn(ec_group, pub, POINT_CONVERSION_UNCOMPRESSED,
-                    pub_bn, pub_bn_ctx);
-
-  *publicKeyLengthOut = BN_num_bytes(pub_bn);
-  *publicKeyOut = (std::uint8_t*)OPENSSL_malloc(*publicKeyLengthOut);
+    // *publicKeyLengthOut = BN_num_bytes(pub_bn);
+    // *publicKeyOut = (std::uint8_t*)OPENSSL_malloc(*publicKeyLengthOut);
 
 //   if (BN_bn2bin(pub_bn, pubk) != pubk_len) {
 //       std::cerr << "Failed to decode pubkey" << std::endl;
 //       return 1;
 //   }
+
+
+    // New OpenSSL V3 way of doing things
+    // Load DER file
+    BIO *bio_key  = NULL;
+    bio_key = BIO_new_file(privateKeyDERFilename.c_str(), "r");
+    //   if (bio_key == NULL) {
+    //       std::cerr << "Failed to read EC key file '" << privateKeyFilename << std::endl;
+    //     //   return 1;
+    //   }
+    EVP_PKEY* pkey;
+    pkey = d2i_PrivateKey_bio(bio_key, NULL);
+    //   if (ec_key == NULL) {
+    //       std::cerr << "Failed to parse EC key file '" << privateKeyFilename << std::endl;
+    //     //   return 1;
+    //   }
+    BIO_free(bio_key);
+
+    // NB below is how to generate a new set of params and a new private key
+    /* Create the context for generating the parameters */
+    // EVP_PKEY_CTX* pctx;
+    // if(!(pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL))) return;
+    // if(!EVP_PKEY_paramgen_init(pctx)) return;
+
+    // /* Set the paramgen parameters according to the type */
+    // /* Use the NID_X9_62_prime256v1 named curve - defined in obj_mac.h */
+    // if(!EVP_PKEY_CTX_set_ec_paramgen_curve_nid(pctx, NID_X9_62_prime256v1)) return;	
+
+    // /* Generate parameters */
+    // if (!EVP_PKEY_paramgen(pctx, NULL)) return;
+
+    // /* Generate the key */
+    // EVP_PKEY* pubkey;
+    // if (!EVP_PKEY_keygen(pctx, &pubkey)) return;
+
+    *publicKeyLengthOut = i2d_PublicKey(pkey,publicKeyOut);
+
+	EVP_PKEY_free(pkey);
+
 }
+
+
 
 } // end ecies namespace
 
@@ -150,6 +196,8 @@ ECIESEncryptionProvider::setKeyMaterial(std::istream& keyDataIn)
 void
 ECIESEncryptionProvider::encryptContent(std::istream& plainIn,std::ostream& encryptedOut)
 {
+    // Also see https://wiki.openssl.org/index.php/EVP_Authenticated_Encryption_and_Decryption#Authenticated_Encryption_using_GCM_mode
+
     // EVP_CIPHER_CTX *ctx;
     // int len = 0;
 

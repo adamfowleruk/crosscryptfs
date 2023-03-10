@@ -13,9 +13,10 @@ namespace crosscryptfs {
 
 // Low-level C style functions first
 
-// Writes a module's parameter file
+/*! \brief Writes a module's parameter settings file */
 void write_context_stream(const std::string contextFolder,const std::string module,const std::string parameter,uint8_t* publicKey,size_t publicKeyLength);
 
+/*! \brief Reads a module's parameter settings file */
 void read_context_stream(const std::string contextFolder,const std::string module,const std::string parameter,uint8_t** publicKeyOut,size_t* publicKeyLengthOut);
 
 } // end namespace

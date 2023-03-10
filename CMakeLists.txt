@@ -19,3 +19,6 @@ include(GNUInstallDirs)
 add_subdirectory(crosscryptfs) 
 add_subdirectory(crosscryptfs-tests)
 add_subdirectory(crosscryptfscli)
+
+include(Doxygen)
+Doxygen(crosscryptfs/include doxygen)

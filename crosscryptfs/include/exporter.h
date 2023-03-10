@@ -10,6 +10,9 @@
 
 namespace crosscryptfs {
 
+/*!
+ * \brief Represents a resumable, error tolerant, file export operation
+ */
 class ExportOperation {
 public:
     ExportOperation(CrossCryptFS& fs, std::string sourceFolder);

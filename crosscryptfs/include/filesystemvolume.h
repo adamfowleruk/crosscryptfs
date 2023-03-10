@@ -17,6 +17,9 @@ namespace crosscryptfs {
 
 // High level C++ classes
 
+/*!
+ * \brief Manages a local (mounted), raw and unencrypted, File System folder and exposes it as a CrossCryptFS VolumeProvider
+ */
 class FileSystemVolumeProvider : public VolumeProvider {
 public:
     FileSystemVolumeProvider(std::string wrappedFolder) noexcept;

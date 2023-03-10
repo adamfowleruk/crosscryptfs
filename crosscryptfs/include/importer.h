@@ -10,6 +10,9 @@
 
 namespace crosscryptfs {
 
+/*!
+ * \brief Represents a resumable, error tolerant, file import operation
+ */
 class ImportOperation {
 public:
     ImportOperation(CrossCryptFS& fs, std::string targetFolder);

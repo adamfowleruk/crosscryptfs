@@ -10,6 +10,9 @@
 
 namespace crosscryptfs {
 
+/*!
+ * \brief High level virtual interface class with common functions required of all EncryptionProviders
+ */
 class EncryptionProvider {
 public:
     EncryptionProvider() = default;
@@ -23,14 +26,33 @@ public:
     // virtual std::string getLongName() = 0;
     // virtual std::string getShortDescription() = 0;
     
+    /*!
+     * \brief Sets a parameter for this EncryptionProvider. Normally read by CrossCryptFS from managed volume settings file(s)
+     */
     virtual void setParameterValue(std::string name,std::string value) = 0;
     // virtual void setParameterFile(std::string fileExtension,std::string value) = 0;
+    /*!
+     * \brief Return all parameter values that should be saved. Normally written by CrossCryptFS to managed volume settings file(s)
+     */
     virtual std::string getParameterValues() = 0;
 
+    /*!
+     * \brief Sets the (Perhaps separately encrypted) 'keyfile' contents for this EncryptionProvider.
+     *
+     * May be a simple binary for a symmetric key, or a more complex format.
+     */
     virtual void setKeyMaterial(std::istream& keyDataIn) = 0;
 
     // Note that these methods assume the resulting encrypted text also includes any data (aside from settings) required for decryption
+    /*!
+     * \brief Encrypts the provided plaintext content and appends the ciphertext to the provided stream
+     *
+     * May also include EncryptionProvider specific content, such as the Authentication Tag for the file, as in ECIESEncryptionProvider
+     */
     virtual void encryptContent(std::istream& plainIn,std::ostream& encryptedOut) = 0;
+    /*!
+     * \brief Decrypts the provided ciphertext content and appends the plaintext to the provided stream
+     */
     virtual void decryptContent(std::istream& encryptedIn,std::ostream& plainOut) = 0;
 };
 

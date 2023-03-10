@@ -18,6 +18,11 @@ namespace crosscryptfs {
 #define BYTEARRAYSIZE 2048
 using ByteArray = char[BYTEARRAYSIZE]; // TODO check this works with g++
 
+/*!
+ * \brief An ABI future-compatible way to represent a source of buffered binary data
+ * 
+ * \warning You should use BytesProvider directly instead of this class
+ */
 class IBytesProvider {
 public:
     IBytesProvider() noexcept = default;
@@ -30,8 +35,16 @@ public:
     virtual size_t getNextBytes(ByteArray& bytes) noexcept = 0;
 };
 
+/*!
+ * \brief Type definition to a shared reference of a source of buffered bytes
+ * \see IBytesProvider
+ */
 using BytesProvider = std::shared_ptr<IBytesProvider>;
 
+/*!
+ * \brief An ABI future-compatible source of binary data from C++ std::istringstream or similar classes
+ * \warning You should use BasicStringStreamBytesProvider or a similar instantiated template to ensure ABI compatibility
+ */
 template <typename SrcT>
 class IStreamBytesProvider: public IBytesProvider {
 public:
@@ -58,6 +71,10 @@ private:
 
 // Instantiation declarations for common types in the translation unit
 // using StreamBytesProvider = std::shared_ptr<IStreamBytesProvider>;
+/*!
+ * \brief Allows a std::istringstream to be used as a source of binary data
+ * \see IStreamBytesProvider
+ */
 using BasicStringStreamBytesProvider = std::shared_ptr<IStreamBytesProvider<std::istringstream>>;
 
 } // end namespace

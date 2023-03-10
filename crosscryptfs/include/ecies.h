@@ -59,7 +59,9 @@ void ecies_generatepublickey(std::string privateKeyDERFilename, uint8_t** public
 
 } // namespace ecies
     
-
+/*!
+ * \brief Provides ECIES Encryption using ECDH HMAC-SHA256 X9.62 using the prime256v1 curve and 128-bit AES GCM.
+ */
 class ECIESEncryptionProvider : public EncryptionProvider {
 public:
     ECIESEncryptionProvider();

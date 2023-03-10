@@ -9,6 +9,11 @@
 
 namespace crosscryptfs {
 
+/*!
+ * \brief Utility class used to print out standard descriptions.
+ *
+ * Mainly used by the crosscryptfscli
+ */
 class MetadataPrinter {
 public:
     MetadataPrinter();

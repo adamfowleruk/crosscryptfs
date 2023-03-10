@@ -16,6 +16,9 @@ namespace crosscryptfs {
 
 // High level C++ classes
 
+/*!
+ * \brief A high level virtual interface class representing a store of files and folders in a hierarchy
+ */
 class VolumeProvider {
 public:
     VolumeProvider() noexcept = default;
