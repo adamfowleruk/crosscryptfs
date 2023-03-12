@@ -50,7 +50,7 @@ ImportOperation::runToCompletion()
     for (auto& p : fs::directory_iterator(fp)) {
         if (p.exists() && p.is_regular_file()) {
             // Import each one into fileystem
-            mImpl->m_fs.importFile(p.path(), p.path().filename());
+            mImpl->m_fs.importFile(p.path().string(), p.path().filename().string());
         }
     }
 }

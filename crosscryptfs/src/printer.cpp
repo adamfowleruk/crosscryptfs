@@ -38,7 +38,7 @@ MetadataPrinter::print(CrossCryptFS& fs)
     std::vector<FileEntry> contents;
     fs.list(contents,"");
     std::cout << "CrossCryptFS contents:-" << std::endl;
-    for (auto& el: contents) {
+    for (const auto& el: contents) {
         std::cout << "\t" << (el.type == FileType::file ? "File" : "Folder") << ": "
                   << el.name << " (" << el.relativePathOnStorage << ")" << std::endl;
     }

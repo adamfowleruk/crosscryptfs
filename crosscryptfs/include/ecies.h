@@ -5,6 +5,7 @@
 #ifndef ECIES_H
 #define ECIES_H
 
+#include <memory>
 #include "encryption.h"
 
 namespace crosscryptfs {

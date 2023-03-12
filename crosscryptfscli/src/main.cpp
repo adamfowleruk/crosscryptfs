@@ -10,6 +10,7 @@
 #include <sstream>
 #include <fstream>
 #include <memory>
+#include <filesystem>
 #include "crosscryptfs/crosscryptfs.h"
 
 #include <openssl/bn.h>
@@ -220,7 +221,8 @@ int main(int argc, char* argv[]) {
 
 
   // Define our wrapped managed storage folder
-  CrossCryptFS encfs("encryptedfolder");
+  FileSystemVolumeProvider volume("encryptedfolder");
+  CrossCryptFS encfs(volume);
 
   // TODO don't bother with private key - just load sym key (ECIES Shared Secret Z) from the command line like recipient public key
 

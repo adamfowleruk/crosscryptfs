@@ -53,7 +53,7 @@ ExportOperation::runToCompletion()
     fs::path rootFolder(mImpl->m_targetFolder);
     for (auto& el: contents) {
         fs::path relPath = rootFolder / el.name;
-        mImpl->m_fs.exportFile(relPath,el.relativePathOnStorage);
+        mImpl->m_fs.exportFile(relPath.string(),el.relativePathOnStorage);
     }
 }
 

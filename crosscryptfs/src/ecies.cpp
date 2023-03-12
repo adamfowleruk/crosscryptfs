@@ -5,6 +5,7 @@
 #include "ecies.h"
 #include <string>
 #include <iostream>
+#include <memory>
 
 #include <openssl/conf.h>
 #include <openssl/evp.h>

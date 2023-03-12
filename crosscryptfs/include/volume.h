@@ -6,6 +6,7 @@
 #define VOLUME_H
 
 #include <string>
+#include <vector>
 #include "io.h"
 #include "file.h"
 

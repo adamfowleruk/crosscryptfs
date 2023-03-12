@@ -104,9 +104,9 @@ FileSystemVolumeProvider::list(std::vector<FileEntry>& addTo, std::string relati
     for (auto& p : fs::directory_iterator(fp)) {
         if (p.exists()) {
             if (p.is_regular_file()) {
-                addTo.emplace_back(p.path().filename(),p.path().filename(),FileType::file);
+                addTo.emplace_back(p.path().filename().string(),p.path().filename().string(),FileType::file);
             } else if (p.is_directory()) {
-                addTo.emplace_back(p.path().filename(),p.path().filename(),FileType::folder);
+                addTo.emplace_back(p.path().filename().string(),p.path().filename().string(),FileType::folder);
             }
         }
     }   
