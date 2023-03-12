@@ -301,6 +301,196 @@ ecies_kdf_x963sha256_opensslv3( // Note that the shared secret contains the tx p
     EVP_KDF_CTX_free(kctx);
 }
 
+void
+ecies_encrypt_aes128gcm_opensslv3(uint8_t* plaintextIn, size_t plaintextLengthIn, 
+    uint8_t* kEncIn16bytes, uint8_t* ivIn16bytes, 
+    uint8_t* additionalAuthDataIn, size_t additionalAuthDataLengthIn, 
+    uint8_t** cryptogramWithTagOut, size_t* cryptogramWithTagLengthOut)
+{
+    // See https://wiki.openssl.org/index.php/EVP_Authenticated_Encryption_and_Decryption#Authenticated_Encryption_using_GCM_mode
+    EVP_CIPHER_CTX *ctx;
+
+    int len;
+
+    int ciphertext_len;
+
+    unsigned char emptyIv[16];
+    for (size_t i = 0;i < 16;++i) {
+        emptyIv[i] = 0;
+    }
+
+
+    /* Create and initialise the context */
+    if(!(ctx = EVP_CIPHER_CTX_new())) {
+        std::cerr << "Failed to create cipher context" << std::endl;
+        return;
+    }
+
+    /* Initialise the encryption operation. */
+    if(1 != EVP_EncryptInit_ex(ctx, EVP_aes_128_gcm(), NULL, NULL, NULL)) {
+        std::cerr << "Failed to initialise encryption for aes 128 gcm" << std::endl;
+        return;
+    }
+
+    // Remove all padding
+    if(!EVP_CIPHER_CTX_set_padding(ctx, 0)) {
+        std::cerr << "Failed to set padding to zero" << std::endl;
+        return;
+    }
+
+    /*
+     * Set IV length for ECIES to 16
+     */
+    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, 16, NULL)) {
+        std::cerr << "Failed to set IV length to 16 for ECIES" << std::endl;
+        return;
+    }
+
+    /* Initialise key and IV */
+    if(1 != EVP_EncryptInit_ex(ctx, NULL, NULL, (const unsigned char*)kEncIn16bytes, emptyIv /*(const unsigned char*)ivIn16bytes*/)) {
+        std::cerr << "Failed to set key and iv" << std::endl;
+        return;
+    }
+
+    /*
+     * Provide any AAD data. This can be called zero or more times as
+     * required
+     */
+    if (0 != additionalAuthDataLengthIn && NULL != additionalAuthDataIn) {
+        if(1 != EVP_EncryptUpdate(ctx, NULL, &len, (const unsigned char*)additionalAuthDataIn, additionalAuthDataLengthIn)) {
+            std::cerr << "Failed to set additional authentication data" << std::endl;
+            return;
+        }
+    }
+
+    *cryptogramWithTagOut = new uint8_t[plaintextLengthIn + 16];
+
+    /*
+     * Provide the message to be encrypted, and obtain the encrypted output.
+     * EVP_EncryptUpdate can be called multiple times if necessary
+     */
+    if(1 != EVP_EncryptUpdate(ctx, (unsigned char*)*cryptogramWithTagOut, &len, (const unsigned char*)plaintextIn, plaintextLengthIn)) {
+        std::cerr << "Failed to perform encryption" << std::endl;
+        return;
+    }
+    ciphertext_len = len;
+
+    /*
+     * Finalise the encryption. Normally ciphertext bytes may be written at
+     * this stage, but this does not occur in GCM mode
+     */
+    if(1 != EVP_EncryptFinal_ex(ctx, ((unsigned char*)*cryptogramWithTagOut) + len, &len)) {
+        std::cerr << "Failed to complete encryption" << std::endl;
+        return;
+    }
+    ciphertext_len += len;
+
+    /* Get the tag */
+    if(1 != EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_GET_TAG, 16, ((unsigned char*)*cryptogramWithTagOut) + ciphertext_len)) {
+        std::cerr << "Failed to generate tag" << std::endl;
+        return;
+    }
+    ciphertext_len += 16;
+    (*cryptogramWithTagLengthOut) = ciphertext_len;
+
+    /* Clean up */
+    EVP_CIPHER_CTX_free(ctx);
+}
+
+void
+ecies_decrypt_aes128gcm_opensslv3(uint8_t* ciphertextIn, size_t ciphertextLengthIn, 
+    uint8_t* kEncIn16bytes, uint8_t* ivIn16bytes,
+    uint8_t* additionalAuthDataIn, size_t additionalAuthDataLengthIn, 
+    uint8_t** plaintextOut, size_t* plaintextLengthOut)
+{
+    // See https://wiki.openssl.org/index.php/EVP_Authenticated_Encryption_and_Decryption#Authenticated_Decryption_using_GCM_mode
+
+    EVP_CIPHER_CTX *ctx;
+    int len;
+    int ret;
+
+    unsigned char emptyIv[16];
+    for (size_t i = 0;i < 16;++i) {
+        emptyIv[i] = 0;
+    }
+
+    /* Create and initialise the context */
+    if(!(ctx = EVP_CIPHER_CTX_new())) {
+        std::cerr << "Failed to create cipher context" << std::endl;
+        return;
+    }
+
+    /* Initialise the decryption operation. */
+    if(!EVP_DecryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, NULL, NULL)) {
+        std::cerr << "Failed to initialise decryption" << std::endl;
+        return;
+    }
+
+    // Remove all padding
+    if(!EVP_CIPHER_CTX_set_padding(ctx, 0)) {
+        std::cerr << "Failed to set padding to zero" << std::endl;
+        return;
+    }
+
+    /* Set IV length. Not necessary if this is 12 bytes (96 bits). (Note that ECIES uses 16 bytes) */
+    if(!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_IVLEN, 16, NULL)) {
+        std::cerr << "Failed to set IV length" << std::endl;
+        return;
+    }
+
+    /* Initialise key and IV */
+    if(!EVP_DecryptInit_ex(ctx, NULL, NULL, (const unsigned char*)kEncIn16bytes, emptyIv /*(const unsigned char*)ivIn16bytes*/)) {
+        std::cerr << "Failed to set key and iv" << std::endl;
+        return;
+    }
+
+    /*
+     * Provide any AAD data. This can be called zero or more times as
+     * required
+     */
+    if (0 != additionalAuthDataLengthIn && NULL != additionalAuthDataIn) {
+        if(!EVP_DecryptUpdate(ctx, NULL, &len, (const unsigned char*)additionalAuthDataIn, additionalAuthDataLengthIn)) {
+            std::cerr << "Failed to set authentication data" << std::endl;
+            return;
+        }
+    }
+
+    *plaintextOut = new uint8_t[ciphertextLengthIn - 16];
+
+    /*
+     * Provide the message to be decrypted, and obtain the plaintext output.
+     * EVP_DecryptUpdate can be called multiple times if necessary
+     */
+    if(!EVP_DecryptUpdate(ctx, (unsigned char*)*plaintextOut, &len, (const unsigned char*)ciphertextIn, ciphertextLengthIn - 16)) {
+        std::cerr << "Failed to do decryption" << std::endl;
+        return;
+    }
+    *plaintextLengthOut = len;
+
+    /* Set expected tag value. Works in OpenSSL 1.0.1d and later */
+    if(!EVP_CIPHER_CTX_ctrl(ctx, EVP_CTRL_GCM_SET_TAG, 16, ciphertextIn + ciphertextLengthIn - 16)) {
+        std::cerr << "Failed to set GCM tag" << std::endl;
+        return;
+    }
+
+    /*
+     * Finalise the decryption. A positive return value indicates success,
+     * anything else is a failure - the plaintext is not trustworthy.
+     */
+    ret = EVP_DecryptFinal_ex(ctx, ((unsigned char*)*plaintextOut) + len, &len);
+
+    /* Clean up */
+    EVP_CIPHER_CTX_free(ctx);
+
+    if(ret > 0) {
+        /* Success */
+        *plaintextLengthOut += len;
+    } else {
+        /* Verify failed */
+        std::cerr << "Failed to verify tag" << std::endl;
+    }
+
+}
 
 } // end ecies namespace
 

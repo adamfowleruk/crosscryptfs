@@ -32,11 +32,15 @@ void ecies_kdf_x963sha256_opensslv3(
     uint8_t* sharedSecretIn, size_t sharedSecretLengthIn, 
     uint8_t** kEncOut16bytes, uint8_t** ivOut16bytes);
 
-// void ecies_encrypt_aesgcm_opensslv3(uint8_t* plaintextIn, uint8_t plaintextLengthIn, 
-//     uint8_t* ivIn16bytes, uint8_t* kEncIn16bytes,
-//     uint8_t* additionalAuthDataIn, uint8_t additionalAuthDataLengthIn, 
-//     uint8_t** cryptogramOut, uint8_t* cryptogramLengthOut, 
-//     uint8_t** tagOut, uint8_t* tagLengthOut);
+void ecies_encrypt_aes128gcm_opensslv3(uint8_t* plaintextIn, size_t plaintextLengthIn, 
+    uint8_t* kEncIn16bytes, uint8_t* ivIn16bytes,
+    uint8_t* additionalAuthDataIn, size_t additionalAuthDataLengthIn, 
+    uint8_t** cryptogramWithTagOut, size_t* cryptogramWithTagLengthOut);
+
+void ecies_decrypt_aes128gcm_opensslv3(uint8_t* ciphertextIn, size_t ciphertextLengthIn, 
+    uint8_t* kEncIn16bytes, uint8_t* ivIn16bytes,
+    uint8_t* additionalAuthDataIn, size_t additionalAuthDataLengthIn, 
+    uint8_t** plaintextOut, size_t* plaintextLengthOut);
 
 // // TODO simplified call for known P256 curve (and thus known lengths)
 // // Uses the above two functions in order
