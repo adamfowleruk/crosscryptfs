@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <memory>
+#include <cstring>
 
 #include <openssl/conf.h>
 #include <openssl/evp.h>

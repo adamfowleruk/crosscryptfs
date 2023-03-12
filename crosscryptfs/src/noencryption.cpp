@@ -4,6 +4,7 @@
 
 #include "noencryption.h"
 #include <string>
+#include <memory>
 #include <istream>
 #include <iostream>
 

@@ -8,6 +8,7 @@
 #include "encryption.h"
 #include <istream>
 #include <iostream>
+#include <memory>
 
 namespace crosscryptfs {
 
