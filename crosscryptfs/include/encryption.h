@@ -56,6 +56,39 @@ public:
     virtual void decryptContent(std::istream& encryptedIn,std::ostream& plainOut) = 0;
 };
 
+
+
+
+
+// class IEncryptionBytesProvider: public IBytesProvider {
+// public:
+//     IEncryptionBytesProvider(EncryptionProvider& source, std::istream& plainIn) noexcept
+//         : sourceEncryption(source),
+//           plainIn(plainIn),
+//           buffer()
+//     {
+//         ;
+//     }
+//     ~IEncryptionBytesProvider() noexcept {};
+//     IEncryptionBytesProvider(const IEncryptionBytesProvider&) = delete;
+//     IEncryptionBytesProvider(IEncryptionBytesProvider&&) = delete;
+//     IEncryptionBytesProvider& operator=(const IEncryptionBytesProvider&) = delete;
+//     IEncryptionBytesProvider& operator=(IEncryptionBytesProvider&&) = delete;
+
+//     size_t getNextBytes(ByteArray& bytes) noexcept override
+//     {
+//         plainIn.read(buffer,BYTEARRAYSIZE);
+//         //
+//     }
+
+// private:
+//     EncryptionProvider& sourceEncryption;
+//     std::istream& plainIn;
+//     ByteArray buffer;
+// };
+
+// using EncryptionStreamBytesProvider = std::shared_ptr<IEncryptionBytesProvider>;
+
 } // end namespace
 
 #endif

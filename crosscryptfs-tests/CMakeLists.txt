@@ -16,6 +16,9 @@ add_executable(crosscryptfs-tests
 
 	# Encryption
 	ecies-tests.cpp
+
+	# High level utilities
+	importer-tests.cpp
 )
 
 include_directories(${crosscryptfs_SOURCE_DIR})

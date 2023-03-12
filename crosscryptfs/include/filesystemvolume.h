@@ -9,6 +9,7 @@
 #include <string>
 #include "volume.h"
 #include "io.h"
+#include <sstream>
 
 namespace crosscryptfs {
 
@@ -30,6 +31,7 @@ public:
     FileSystemVolumeProvider& operator=(FileSystemVolumeProvider&&) = delete;
 
     void add(const std::string relativePath,BytesProvider src, const size_t length) noexcept override;
+    std::ostream&& addStream(const std::string relativePath) noexcept override;
     void remove(const std::string relativePath) noexcept override;
     void destroy() noexcept override;
     void list(std::vector<FileEntry>& addTo, std::string relativeFolderName) noexcept override;

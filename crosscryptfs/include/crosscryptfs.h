@@ -6,6 +6,7 @@
 #define CROSSCRYPTFS_H
 
 #include "file.h"
+#include "volume.h"
 #include "context.h"
 #include "encryption.h"
 #include <string>
@@ -28,7 +29,7 @@ namespace crosscryptfs {
  */
 class CrossCryptFS {
 public:
-    CrossCryptFS(std::string wrappedFolder);
+    CrossCryptFS(VolumeProvider& wrappedFolder);
     ~CrossCryptFS();
     CrossCryptFS(const CrossCryptFS&) = delete;
     CrossCryptFS(CrossCryptFS&&) = delete;

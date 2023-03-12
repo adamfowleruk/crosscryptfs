@@ -421,7 +421,7 @@ ecies_decrypt_aes128gcm_opensslv3(uint8_t* ciphertextIn, size_t ciphertextLength
     }
 
     /* Initialise the decryption operation. */
-    if(!EVP_DecryptInit_ex(ctx, EVP_aes_256_gcm(), NULL, NULL, NULL)) {
+    if(!EVP_DecryptInit_ex(ctx, EVP_aes_128_gcm(), NULL, NULL, NULL)) {
         std::cerr << "Failed to initialise decryption" << std::endl;
         return;
     }

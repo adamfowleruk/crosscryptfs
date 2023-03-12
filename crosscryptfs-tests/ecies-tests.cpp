@@ -55,6 +55,34 @@ hex_to_binary(const char* buf, uint8_t** binaryOut, size_t* bufferLengthOut)
     }
 }
 
+TEST_CASE("Binary and string converstion","[stringtobinary]") {
+    char* original = "Lorem ipsum dolar sit amet";
+    uint8_t* binary = NULL;
+    size_t binaryLength = 0;
+
+    string_to_binary(original,&binary,&binaryLength);
+    REQUIRE(NULL != binary);
+    REQUIRE(26 == binaryLength);
+
+    char* final = NULL;
+    size_t finalLength = 0;
+    binary_to_string(binary,binaryLength,&final,&finalLength);
+    REQUIRE(NULL != final);
+    REQUIRE(26 == finalLength);
+
+    std::cout << final << std::endl;
+
+    size_t matches = 0;
+    for (size_t i = 0;i < 26;++i) {
+        std::cout << final[i];
+        if (final[i] == original[i]) {
+            ++matches;
+        }
+    }
+    std::cout << std::endl;
+    REQUIRE(26 == matches);
+}
+
 TEST_CASE("OpenSSL Generate Save Load Public Key", "[file][ecc][openssl]" ) {
     std::string privateKeyDERFilename("ecc_tx_private_key.der");
     uint8_t* publicKey = NULL;
@@ -217,7 +245,7 @@ TEST_CASE("OpenSSL AES128GCM","[encryption][decryption[ecies][aes][ad][gcm][open
             ++matches;
         }
     }
-    // REQUIRE(68 == matches);
+    // REQUIRE(68 == matches); // Different than the online version, but ours decrypts to its original plaintext
 
     // Now try decrypting and check it matches the original
     uint8_t* decryptedText = NULL;
@@ -232,7 +260,7 @@ TEST_CASE("OpenSSL AES128GCM","[encryption][decryption[ecies][aes][ad][gcm][open
             ++matches;
         }
     }
-    // REQUIRE(52 == matches);
+    REQUIRE(52 == matches);
 
     char* decryptedTextString = NULL;
     size_t decryptedTextStringLength = 0;

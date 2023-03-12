@@ -6,6 +6,7 @@
 #include "volume.h"
 #include "filesystemvolume.h"
 #include <string>
+#include <sstream>
 #include <fstream>
 #include <istream>
 #include <iostream>
@@ -58,6 +59,18 @@ FileSystemVolumeProvider::add(const std::string relativePath,BytesProvider src, 
         }
         outfile.close();
     }
+}
+
+std::ostream&&
+FileSystemVolumeProvider::addStream(const std::string relativePath) noexcept
+{
+    namespace fs = std::filesystem;
+    if (!fs::exists(mImpl->wrappedFolder + "/" + relativePath)) { // TODO cross platform
+        fs::create_directories(mImpl->wrappedFolder + "/" + relativePath); // TODO cross platform
+    }
+    return std::move(std::ofstream(mImpl->wrappedFolder + "/" + relativePath));
+    // std::ofstream ofs(mImpl->wrappedFolder + "/" + relativePath);
+    // return std::ostream(ofs.rdbuf()); // TODO cross platform
 }
 
 void
