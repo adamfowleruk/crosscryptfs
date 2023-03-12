@@ -4,20 +4,16 @@
 
 #include "ecies.h"
 #include <string>
-
-// #include <openssl/bn.h>
-// #include <openssl/ec.h>
-// #include <openssl/ecdh.h>
-// #include <openssl/pem.h>
-// #include <openssl/rand.h>
-// #include <openssl/evp.h>
-
-// #include <openssl/provider.h>
+#include <iostream>
 
 #include <openssl/conf.h>
 #include <openssl/evp.h>
+#include <openssl/ec.h>
 #include <openssl/err.h>
 #include <openssl/pem.h>
+#include <openssl/ossl_typ.h>
+#include <openssl/kdf.h>
+#include <openssl/core_names.h>
 
 namespace crosscryptfs {
 
@@ -35,6 +31,37 @@ ecies_verify_platform()
     //     return EXIT_FAILURE;
     // }
     return 0;
+}
+
+EVP_PKEY*
+ecies_read_private_key_file(std::string privateKeyDERFilename)
+{
+    // Load DER file
+    BIO *bio_key  = NULL;
+    bio_key = BIO_new_file(privateKeyDERFilename.c_str(), "r");
+    //   if (bio_key == NULL) {
+    //       std::cerr << "Failed to read EC key file '" << privateKeyFilename << std::endl;
+    //     //   return 1;
+    //   }
+    EVP_PKEY* pkey;
+    pkey = d2i_PrivateKey_bio(bio_key, NULL);
+    //   if (ec_key == NULL) {
+    //       std::cerr << "Failed to parse EC key file '" << privateKeyFilename << std::endl;
+    //     //   return 1;
+    //   }
+    BIO_free(bio_key);
+
+    return pkey;
+}
+
+void
+ecies_read_private_key(std::string privateKeyDERFilename, uint8_t** privateKeyOut, size_t* privateKeyLengthOut)
+{
+    EVP_PKEY* pkey = ecies_read_private_key_file(privateKeyDERFilename);
+
+    *privateKeyLengthOut = i2d_PrivateKey(pkey,privateKeyOut);
+
+	EVP_PKEY_free(pkey);
 }
 
 void
@@ -97,37 +124,7 @@ ecies_generatepublickey(std::string privateKeyDERFilename, uint8_t** publicKeyOu
 
 
     // New OpenSSL V3 way of doing things
-    // Load DER file
-    BIO *bio_key  = NULL;
-    bio_key = BIO_new_file(privateKeyDERFilename.c_str(), "r");
-    //   if (bio_key == NULL) {
-    //       std::cerr << "Failed to read EC key file '" << privateKeyFilename << std::endl;
-    //     //   return 1;
-    //   }
-    EVP_PKEY* pkey;
-    pkey = d2i_PrivateKey_bio(bio_key, NULL);
-    //   if (ec_key == NULL) {
-    //       std::cerr << "Failed to parse EC key file '" << privateKeyFilename << std::endl;
-    //     //   return 1;
-    //   }
-    BIO_free(bio_key);
-
-    // NB below is how to generate a new set of params and a new private key
-    /* Create the context for generating the parameters */
-    // EVP_PKEY_CTX* pctx;
-    // if(!(pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL))) return;
-    // if(!EVP_PKEY_paramgen_init(pctx)) return;
-
-    // /* Set the paramgen parameters according to the type */
-    // /* Use the NID_X9_62_prime256v1 named curve - defined in obj_mac.h */
-    // if(!EVP_PKEY_CTX_set_ec_paramgen_curve_nid(pctx, NID_X9_62_prime256v1)) return;	
-
-    // /* Generate parameters */
-    // if (!EVP_PKEY_paramgen(pctx, NULL)) return;
-
-    // /* Generate the key */
-    // EVP_PKEY* pubkey;
-    // if (!EVP_PKEY_keygen(pctx, &pubkey)) return;
+    EVP_PKEY* pkey = ecies_read_private_key_file(privateKeyDERFilename);
 
     *publicKeyLengthOut = i2d_PublicKey(pkey,publicKeyOut);
 
@@ -135,6 +132,174 @@ ecies_generatepublickey(std::string privateKeyDERFilename, uint8_t** publicKeyOu
 
 }
 
+void
+ecies_generate_private_key(EVP_PKEY** privateKeyOut)
+{
+    // NB below is how to generate a new set of params and a new private key
+    /* Create the context for generating the parameters */
+    EVP_PKEY_CTX* pctx;
+    if(!(pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL))) {
+        std::cerr << "Key param context creation failed" << std::endl;
+        return;
+    };
+    if(!EVP_PKEY_paramgen_init(pctx)) {
+        std::cerr << "Key paramgen creation failed" << std::endl;
+        return;
+    };
+
+    /* Set the paramgen parameters according to the type */
+    /* Use the NID_X9_62_prime256v1 named curve - defined in obj_mac.h */
+    if(!EVP_PKEY_CTX_set_ec_paramgen_curve_nid(pctx, NID_X9_62_prime256v1)) {
+        std::cerr << "Key param context set curve failed" << std::endl;
+        return;
+    };
+
+    /* Generate parameters */
+    EVP_PKEY* params = NULL;
+    if (!EVP_PKEY_paramgen(pctx, &params)) {
+        std::cerr << "Key param generation failed" << std::endl;
+        return;
+    };
+
+    /* Generate the key */
+    EVP_PKEY_CTX* kctx = NULL;
+    if(!(kctx = EVP_PKEY_CTX_new(params, NULL))) {
+        std::cerr << "Key context generation failed" << std::endl;
+        return;
+    };
+
+    if(!EVP_PKEY_keygen_init(kctx)) {
+        std::cerr << "Key generation init failed" << std::endl;
+        return;
+    };
+
+    if (!EVP_PKEY_keygen(kctx, privateKeyOut)) {
+        std::cerr << "Key generation failed" << std::endl;
+        return;
+    };
+
+	EVP_PKEY_CTX_free(kctx);
+	EVP_PKEY_CTX_free(pctx);
+}
+
+void
+ecies_ka_ecdh_opensslv3(uint8_t* rxPubKeyIn, size_t rxPubKeyLengthIn, 
+    uint8_t* txEphPrivKeyIn, size_t txEphPrivKeyLengthIn, 
+    uint8_t** sharedSecretOut, size_t* sharedSecretLengthOut)
+{
+    // Read in RX public key from bytes
+    EVP_PKEY* rxPublicKey = NULL;
+    EVP_PKEY* txPrivateKey = NULL;
+    EVP_PKEY* templateKey = NULL;
+    // Need a PKEY to specify curve parameters
+    ecies_generate_private_key(&templateKey);
+    if (NULL == templateKey) {
+        std::cerr << "Template key is null" << std::endl;
+        return;
+    }
+    rxPublicKey = d2i_PublicKey(EVP_PKEY_EC, &templateKey, (const unsigned char**)&rxPubKeyIn, rxPubKeyLengthIn);
+
+    // // Read in tx private key from bytes
+    txPrivateKey = d2i_PrivateKey(EVP_PKEY_EC, &templateKey, (const unsigned char**)&txEphPrivKeyIn, txEphPrivKeyLengthIn);
+
+    // Agree shared secret bytes
+    // See https://wiki.openssl.org/index.php/Elliptic_Curve_Diffie_Hellman#Using_ECDH_in_OpenSSL
+
+	EVP_PKEY_CTX *pctx, *kctx;
+	EVP_PKEY_CTX *ctx;
+	// EVP_PKEY *params = NULL;
+	// /* Create the context for parameter generation */
+	// if(NULL == (pctx = EVP_PKEY_CTX_new_id(EVP_PKEY_EC, NULL))) {};
+
+	// /* Initialise the parameter generation */
+	// if(1 != EVP_PKEY_paramgen_init(pctx)) {};
+
+	// /* We're going to use the ANSI X9.62 Prime 256v1 curve */
+	// if(1 != EVP_PKEY_CTX_set_ec_paramgen_curve_nid(pctx, NID_X9_62_prime256v1)) {};
+
+	// /* Create the parameter object params */
+	// if (!EVP_PKEY_paramgen(pctx, &params)) {};
+
+    // We load our tx private key from elsewhere
+	// /* Create the context for the key generation */
+	// if(NULL == (kctx = EVP_PKEY_CTX_new(params, NULL))) {};
+	// /* Generate the key */
+	// if(1 != EVP_PKEY_keygen_init(kctx)) {};
+	// if (1 != EVP_PKEY_keygen(kctx, &txPrivateKey)) {};
+
+	/* Create the context for the shared secret derivation */
+	if(NULL == (ctx = EVP_PKEY_CTX_new(txPrivateKey, NULL))) {}; // TODO REQUIRE FIPS ENGINE
+
+	/* Initialise */
+	if(1 != EVP_PKEY_derive_init(ctx)) {};
+
+	/* Provide the peer public key */
+	if(1 != EVP_PKEY_derive_set_peer(ctx, rxPublicKey)) {};
+
+	/* Determine buffer length for shared secret */
+	if(1 != EVP_PKEY_derive(ctx, NULL, sharedSecretLengthOut)) {};
+
+	/* Create the buffer */
+	if(NULL == (*sharedSecretOut = (uint8_t*) OPENSSL_malloc(*sharedSecretLengthOut))) {};
+
+	/* Derive the shared secret */
+	if(1 != (EVP_PKEY_derive(ctx, *sharedSecretOut, sharedSecretLengthOut))) {};
+
+	EVP_PKEY_CTX_free(ctx);
+	EVP_PKEY_free(rxPublicKey);
+	EVP_PKEY_free(txPrivateKey);
+	// EVP_PKEY_free(templateKey); // freed already during key generation
+	// EVP_PKEY_CTX_free(kctx);
+	// EVP_PKEY_free(params);
+	// EVP_PKEY_CTX_free(pctx);
+
+	/* Never use a derived secret directly. Typically it is passed
+	 * through some hash function to produce a key */
+    // Note pass sharedSecretKey through HMAC_SHA256 in KDF
+}
+
+void
+ecies_kdf_x963sha256_opensslv3( // Note that the shared secret contains the tx public key info in ECIES
+    uint8_t* sharedSecretIn, size_t sharedSecretLengthIn, 
+    uint8_t** kEncOut16bytes, uint8_t** ivOut16bytes)
+{
+    // See https://www.openssl.org/docs/manmaster/man7/EVP_KDF-X963.html
+    EVP_KDF *kdf;
+    EVP_KDF_CTX *kctx;
+    unsigned char out[32];
+
+    OSSL_PARAM params[4], *p = params;
+
+    kdf = EVP_KDF_fetch(NULL, "X963KDF", NULL);
+    kctx = EVP_KDF_CTX_new(kdf);
+    EVP_KDF_free(kdf);
+
+    *p++ = OSSL_PARAM_construct_utf8_string(OSSL_KDF_PARAM_DIGEST,
+                                            SN_sha256, strlen(SN_sha256)); // TODO WHERE ARE THESE DERIVED FROM?
+    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_SECRET,
+                                            (unsigned char*)sharedSecretIn, sharedSecretLengthIn);
+    *p++ = OSSL_PARAM_construct_octet_string(OSSL_KDF_PARAM_INFO,
+                                            (char*)"label", (size_t)5);
+    // Note: We do not provide a salt (No need for ECIES)
+    *p = OSSL_PARAM_construct_end();
+    if (EVP_KDF_derive(kctx, out, sizeof(out), params) <= 0) {
+        // error("EVP_KDF_derive");
+        std::cerr << "EC KDF failed" << std::endl;
+        return;
+    }
+
+    // Copy over bytes
+    *ivOut16bytes = new uint8_t[16];
+    *kEncOut16bytes = new uint8_t[16];
+    for (size_t i = 0;i < 16;++i) {
+        (*kEncOut16bytes)[i] = out[i];
+    }
+    for (size_t i = 0;i < 16;++i) {
+        (*ivOut16bytes)[i] = out[i + 16];
+    }
+
+    EVP_KDF_CTX_free(kctx);
+}
 
 
 } // end ecies namespace

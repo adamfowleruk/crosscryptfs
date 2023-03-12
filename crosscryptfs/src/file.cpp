@@ -8,7 +8,7 @@
 
 namespace crosscryptfs {
 
-FileEntry::FileEntry(std::string relativeOnStorage,std::string name,FileType type)
+FileEntry::FileEntry(std::string relativeOnStorage,std::string name,FileType type) noexcept
     : relativePathOnStorage(relativeOnStorage),
       name(name),
       type(type)

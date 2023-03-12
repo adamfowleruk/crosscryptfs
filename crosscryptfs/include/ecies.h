@@ -15,17 +15,22 @@ namespace ecies
 // Ensures FIPS mode and required cyphers are present
 int ecies_verify_platform();
 
+void ecies_read_private_key(std::string privateKeyDERFilename, uint8_t** privateKeyOut, size_t* privateKeyLengthOut);
+
 // TODO use c strings for file names
 void ecies_generatepublickey(std::string privateKeyDERFilename, uint8_t** publicKeyOut, size_t* publicKeyLengthOut);
 
 // TODO utility functions to validate curves and points for known issues (See security research on known problem point selection)
 
-// TODO simplified call for known P256 curve (and thus known lengths)
-// void ecies_ka_ecdh_opensslv3(uint8_t* rxPubKeyIn, uint8_t rxPubKeyLengthIn, uint8_t* txEphPrivKeyIn, uint8_t txEphPrivKeyLengthIn, uint8_t** sharedSecretOut);
+// Simplified call for known P256 curve (and thus known lengths)
+void ecies_ka_ecdh_opensslv3(uint8_t* rxPubKeyIn, size_t rxPubKeyLengthIn, 
+    uint8_t* txEphPrivKeyIn, size_t txEphPrivKeyLengthIn, 
+    uint8_t** sharedSecretOut, size_t* sharedSecretLengthOut);
 
-// // These two functions are split out as the KDF only needs running once for a given pair of keys
-// void ecies_kdf_x963sha256_opensslv3(uint8_t* txEphPubKeyIn, uint8_t txEphPubKeyLengthIn, uint8_t* sharedSecretIn, uint8_t sharedSecretLengthIn, 
-//     uint8_t** ivOut16bytes, uint8_t** kEncOut16bytes);
+// These two functions are split out as the KDF only needs running once for a given pair of keys
+void ecies_kdf_x963sha256_opensslv3( 
+    uint8_t* sharedSecretIn, size_t sharedSecretLengthIn, 
+    uint8_t** kEncOut16bytes, uint8_t** ivOut16bytes);
 
 // void ecies_encrypt_aesgcm_opensslv3(uint8_t* plaintextIn, uint8_t plaintextLengthIn, 
 //     uint8_t* ivIn16bytes, uint8_t* kEncIn16bytes,
