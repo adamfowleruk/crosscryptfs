@@ -8,16 +8,17 @@
 #include "encryption.h"
 #include <string>
 #include <vector>
+#include <cstdint>
 
 namespace crosscryptfs {
 
 // Low-level C style functions first
 
 /*! \brief Writes a module's parameter settings file */
-void write_context_stream(const std::string contextFolder,const std::string module,const std::string parameter,uint8_t* publicKey,size_t publicKeyLength);
+void write_context_stream(const std::string contextFolder,const std::string module,const std::string parameter,std::uint8_t* publicKey,std::size_t publicKeyLength);
 
 /*! \brief Reads a module's parameter settings file */
-void read_context_stream(const std::string contextFolder,const std::string module,const std::string parameter,uint8_t** publicKeyOut,size_t* publicKeyLengthOut);
+void read_context_stream(const std::string contextFolder,const std::string module,const std::string parameter,std::uint8_t** publicKeyOut,std::size_t* publicKeyLengthOut);
 
 } // end namespace
 

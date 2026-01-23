@@ -250,13 +250,13 @@ int main(int argc, char* argv[]) {
   printer.print(encfs);
 
   // Import / encrypt a source folder
-  ImportOperation importer(encfs, "/Users/adamfowler/Documents/SomeSourceFolder");
+  ImportOperation importer(encfs, "./SomeSourceFolder");
   importer.runToCompletion();
   std::cout << std::endl << "Content after import (encrypted content):-" << std::endl;
   printer.print(encfs);
 
   // Now export to a destination folder
-  ExportOperation exporter(encfs, "/Users/adamfowler/Documents/SomeTargetFolder");
+  ExportOperation exporter(encfs, "./SomeTargetFolder");
   exporter.runToCompletion();
   std::cout << std::endl << "Content after export (internally we still have encrypted content):-" << std::endl;
   printer.print(encfs);

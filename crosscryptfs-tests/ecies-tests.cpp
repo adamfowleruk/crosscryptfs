@@ -180,7 +180,7 @@ TEST_CASE("OpenSSL EC KDF","[kdf][x963][ecies][ecc][openssl]") {
     REQUIRE(ivOut[0] != 0);
 }
 
-TEST_CASE("OpenSSL AES128GCM","[encryption][decryption[ecies][aes][ad][gcm][openssl]") {
+TEST_CASE("OpenSSL AES128GCM","[encryption][decryption][ecies][aes][ad][gcm][openssl]") {
     // Use known symmetric key for encryption and decryption of a known message with known outcome
     std::string plaintext("A very long message. Lorem dolar sit amet consecutor");
     std::string secretKeyHex("00000000000000000000000000000000");//("2b7e151628aed2a6abf715892b7e1516");

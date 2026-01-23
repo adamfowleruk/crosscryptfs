@@ -122,9 +122,14 @@
       // "OPENSSL_INCLUDE_DIR": "/opt/openssl/include",
       
       // For Mac brew install openssl@3:-
-      "OPENSSL_ROOT_DIR": "/opt/homebrew/opt/openssl@3",
-      "OPENSSL_CRYPTO_LIBRARY": "/opt/homebrew/opt/openssl@3/lib/libcrypto.a",
-      "OPENSSL_INCLUDE_DIR": "/opt/homebrew/opt/openssl@3/include",
+      // "OPENSSL_ROOT_DIR": "/opt/homebrew/opt/openssl@3",
+      // "OPENSSL_CRYPTO_LIBRARY": "/opt/homebrew/opt/openssl@3/lib/libcrypto.a",
+      // "OPENSSL_INCLUDE_DIR": "/opt/homebrew/opt/openssl@3/include",
+
+      // Windows 11:-
+      // "OPENSSL_ROOT_DIR": "D:\\git\\bilberry\\openssl-3.6.0",
+      // "OPENSSL_CRYPTO_LIBRARY": "D:\\git\\bilberry\\openssl-3.6.0\\lib\\libcrypto.lib",
+      // "OPENSSL_INCLUDE_DIR": "D:\\git\\bilberry\\openssl-3.6.0\\include",
       
       "OPENSSL_USE_STATIC_LIBS": true
     },

@@ -10,6 +10,6 @@ openssl ecparam -name prime256v1 -noout -genkey -conv_form uncompressed -outform
 Then invoke crosscryptcli using something like:-
 
 ```sh
-crosscryptcli ./ecc_key.der
+./crosscryptfscli ./ecc_key.der
 ```
 
