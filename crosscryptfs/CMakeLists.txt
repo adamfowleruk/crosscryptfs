@@ -52,7 +52,7 @@ add_compile_options(-Wl,-Wno-unused-function)
 
 # Use the DEV location (not system location) to pick up OpenSSL v3
 # see .vscode/settings.json for CMake path overrides
-find_package(OpenSSL 3.0.2 REQUIRED)
+find_package(OpenSSL 4.0.1 REQUIRED)
 target_link_libraries(crosscryptfs OpenSSL::Crypto)
 
 install(TARGETS crosscryptfs 
